@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>002 Visibility and Scopes</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // visibility of var
+
+            var v = "outer";
+            var o = 12;
+
+            Assert.equals(v, "outer");
+
+            function func() {
+                var v = "inner";
+                Assert.equals(v, "inner");
+                Assert.equals(o, 12);
+            }
+            func();
+
+            Assert.equals(v, "outer");
+
+
+            // let is visible only into local block and sub-blocks
+
+            (function varTest() {
+                var x = 1;
+                if (true) {
+                    var x = 2;  // same variable!
+                    Assert.equals(x, 2);
+                }
+                Assert.equals(x, 2);
+            })();
+
+            (function letTest() {
+                let x = 1;
+                if (true) {
+                    let x = 2;  // different variable
+                    Assert.equals(x, 2);
+                }
+                Assert.equals(x, 1);
+            })();
+
+
+            // scope-chain
+
+            function sayHello(person) {
+                var fullName = person.name + " " + person.surname;
+
+                return function(title) {
+                    return title + " " + fullName;
+                };
+            }
+            var saluteJDoe = sayHello({name: 'John', surname: 'Doe'});
+
+            // here fullName doesn't exist but is used anyway in the function
+            Assert.equals(saluteJDoe('Mr.'), "Mr. John Doe");
+
+
+            // scope chain problem
+
+            function multilingualHello(name) {
+                var salutes = [];
+                for (v of ['Ciao', 'Hello', 'Saludos']) {
+                    salutes.push(function() {
+                        return v + " " + name;
+                    });
+                }
+                return salutes;
+            }
+            var hello = multilingualHello("Fra");
+            Assert.equals(hello.length, 3);
+
+            // only the last value of v is maintained
+            Assert.equals(hello[0](), "Saludos Fra");
+            Assert.equals(hello[1](), "Saludos Fra");
+            Assert.equals(hello[2](), "Saludos Fra");
+
+
+            function multilingualHelloFixed(name) {
+                var salutes = [];
+                for (v of ['Ciao', 'Hello', 'Saludos']) {
+                    salutes.push(
+                        // using an IIFE will fix the value
+                        (function(value) {
+                            return function() {
+                                return value + " " + name;
+                            };
+                        })(v) );
+                }
+                return salutes;
+            }
+            var helloFixed = multilingualHelloFixed("Fra");
+            Assert.equals(helloFixed.length, 3);
+
+            // only the last value of v is maintained
+            Assert.equals(helloFixed[0](), "Ciao Fra");
+            Assert.equals(helloFixed[1](), "Hello Fra");
+            Assert.equals(helloFixed[2](), "Saludos Fra");
+
+            Log.end("log");
+        </script>
+    </body>
+</html>

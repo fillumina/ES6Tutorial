@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>for cycles</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // classic c-style
+
+            var a = new Array();
+            for (var i=0; i<10; i++) {
+                a.push(i);
+            }
+            Assert.equals(a.length, 10);
+
+
+            // for in (index)
+
+            var sum = 0;
+            for (index in a) {
+                sum += a[index];
+            }
+            Assert.equals(sum, 45);
+
+            // for in used to enumerate object's properties
+            var obj = {
+                name: "Francesco",
+                vote: 7
+            };
+            var s = "";
+            for (v in obj) {
+                s += v + ": " + obj[v] + ", ";
+            }
+            Assert.equals(s, "name: Francesco, vote: 7, ");
+
+            // for of (value)
+
+            sum = 0;
+            for (value of a) {
+                sum += value;
+            }
+            Assert.equals(sum, 45);
+
+
+            // array's forEach
+            sum = 0;
+            [5, 10, 15].forEach(function(v) {
+                sum += v;
+            });
+            Assert.equals(sum, 30);
+
+            Log.end("log");
+        </script>
+
+    </body>
+</html>

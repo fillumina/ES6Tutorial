@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>proxy</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <input id="money" type="text" />
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // doesn't allow null values
+            var handler = {
+                get(target, propertyName) {
+                    var v = target[propertyName];
+                    return v === null ? 0 : v;
+                },
+                set(target, propertyName, value) {
+                    if (value !== null) {
+                        target[propertyName] = value;
+                    }
+                }
+            };
+
+            var triangle = {
+                base: null,
+                height: null
+            };
+
+            var proxied = new Proxy(triangle, handler);
+
+            Assert.equals(proxied.base, 0);
+            proxied.base = 4;
+            Assert.equals(proxied.base, 4);
+            proxied.base = null;
+            Assert.equals(proxied.base, 4);
+
+
+            // data binding:
+            // report on an HTML element a change in a object trasparently
+            class Binder {
+                bind(src, srcProperty, trg, trgProperty) {
+                    var handler = {
+                        set(target, propertyName, value) {
+                            if (propertyName == srcProperty) {
+                                trg[trgProperty] = value;
+                            }
+                            target[propertyName] = value;
+                        }
+                    };
+                    return new Proxy(src, handler);
+                }
+            }
+
+            var invoice = {
+                price: 0
+            };
+            var binder = new Binder();
+            var money = document.getElementById("money");
+            var proxiedInvoice = binder.bind(invoice, "price", money, "value");
+
+            Assert.equals(money['value'], "");
+            proxiedInvoice.price = 100;
+            Assert.equals(money['value'], "100");
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

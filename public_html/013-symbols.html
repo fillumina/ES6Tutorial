@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>symbols</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+
+            var i = Symbol("mioSimbolo");
+            var j = Symbol("mioSimbolo");
+            Assert.differs(i, j);
+
+            var x = Symbol.for("mioSimbolo");
+            var y = Symbol.for("mioSimbolo");
+            Assert.equals(x, y);
+
+
+            // use symbol for private properties
+            var obj = {};
+            var s = Symbol();
+            obj[s] = "hello world";
+            Assert.equals(obj[s], "hello world");
+
+            // not present in Object.getOwnPropertyNames()
+            Assert.equals(Object.getOwnPropertyNames(obj).length, 0);
+
+            // but present in Reflext.ownKeys()
+            Assert.equals(Reflect.ownKeys(obj)[0], s);
+
+
+            // use symbol for enumerations
+            var Weekdays = {
+                Monday: Symbol(),
+                Thuesday: Symbol(),
+                Wednesday: Symbol(),
+                Thursday: Symbol(),
+                Friday: Symbol(),
+                Saturday: Symbol(),
+                Sunday: Symbol(),
+
+                isWeekend(w) {
+                    return w === this.Saturday || w === this.Sunday;
+                }
+            };
+            Assert.isTrue(Weekdays.isWeekend(Weekdays.Sunday));
+
+
+            // iterators
+            class Collection {};
+            Collection.prototype[Symbol.iterator] = function() {
+                var self = this;
+                var i = 0;
+                return {
+                    next: function() {
+                        if (self[i] !== undefined) {
+                            return { value: self[i++] };
+                        } else {
+                            return { done: true };
+                        }
+                    }
+                };
+            };
+
+            var coll = new Collection();
+            coll[0] = "a";
+            coll[1] = "b";
+            coll[2] = "c";
+            coll[3] = "d";
+
+            function toString(coll) {
+                var result = "";
+                for (var x of coll) {
+                    result += x + " ";
+                }
+                return result;
+            }
+
+            Assert.equals(toString(coll), "a b c d ");
+
+            // if the collection misses an index it stops there
+            var collMissing = new Collection();
+            collMissing[0] = "a";
+            collMissing[1] = "b";
+            collMissing[3] = "d";
+            Assert.equals(toString(collMissing), "a b ");
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

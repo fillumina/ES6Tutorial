@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>003 Variable Declaration</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            //"use strict";
+
+            // with "use strict" this would not be allowed (need var or let)
+            f = 6;
+            Assert.equals(f, 6);
+            Assert.equals(this.f, 6);
+
+            const c = 3;
+            try {
+                c = 12;
+                Assert.fail();
+            } catch (e) {
+                // cannot change a const value
+            }
+
+            // var acts on the object implicit this
+            var a = 1;
+            Assert.equals(a, 1);
+            Assert.equals(this.a, 1);
+            Assert.isDefined(a);
+
+            // let acts on the context (stack)
+            let b = 2;
+            Assert.equals(b, 2);
+            Assert.isUndefined(this.b);
+
+            var m = 1;
+
+            function func() {
+                Assert.equals(a, 1);
+                Assert.equals(b, 2);
+
+                var d = 4;
+                let e = 5;
+
+                m++;
+
+                function innerFunc() {
+                    // cannot do this with "use strict"
+                    // g is created here and available in the context of func()
+                    this.g = 8;
+                }
+
+                innerFunc();
+
+                Assert.equals(g, 8);
+            }
+
+            func();
+
+            Assert.isUndefined(this.d);
+            Assert.equals(m, 2);
+
+            function funcStrict() {
+                "use strict";
+
+                var g = 1;
+
+                function innerFunc() {
+                    // only way to access this.g from here
+                    g = 8;
+                }
+
+                innerFunc();
+
+                Assert.equals(g, 8);
+            }
+
+            funcStrict();
+
+            Log.end("log");
+        </script>
+
+    </body>
+</html>

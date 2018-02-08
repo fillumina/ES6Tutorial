@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>reflection</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <div id="code"></div>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="a">
+            /*
+             enumerating properties
+             */
+
+            // defines an anonymous object
+            var linus = {
+                name: "Linus",
+                surname: "Torvalds",
+                tel: "06123"
+            };
+
+            var props = [];
+            for (let p in linus) {
+                props.push(p + " => " + linus[p]);
+            }
+            Assert.equals(props[0], "name => Linus");
+            Assert.equals(props[1], "surname => Torvalds");
+            Assert.equals(props[2], "tel => 06123");
+
+            // the prototype of an anonymous object defined with ={} is always Object
+            Assert.equals(Object.getPrototypeOf(linus), Object.prototype);
+
+
+            // objects defined with function() have their own prototype
+            var user = function(name) {
+                this.name = name;
+                this.toString = function() { return "user " + name; };
+            };
+            Assert.differs(Object.getPrototypeOf(user), Object.prototype);
+
+            var devel = Object.create(user.prototype, {
+                name : {value : "Franco"}
+            });
+            // objects created with Object.create inherit the prototype
+            Assert.equals(Object.getPrototypeOf(devel), user.prototype);
+            // objects created with Object.create don't have a prototype
+            Assert.isUndefined(devel.prototype);
+
+            user.age = 21;
+            Assert.isFalse(Reflect.has(devel, "age"));
+
+            user.prototype.id = 12;
+            Assert.isTrue(Reflect.has(devel, "id"));
+            Assert.isFalse(devel.hasOwnProperty("id"));
+
+            devel.language = "Javascript";
+            Assert.isTrue(Reflect.has(devel, "language"));
+            Assert.isTrue(devel.hasOwnProperty("language"));
+
+            var develOwnKeys = Reflect.ownKeys(devel);
+            Assert.equals(develOwnKeys.length, 2);
+            Assert.equals(develOwnKeys[0], "name");
+            Assert.equals(develOwnKeys[1], "language");
+
+
+            // prototype with classe
+
+            class Vehicle {}
+            class Car extends Vehicle {
+                constructor() {
+                    super();
+                    this.wheels = 4;
+                }
+            }
+            Assert.differs(Vehicle.prototype, Object.prototype);
+            var veh = new Car();
+            Vehicle.prototype.hello = function() { return "hello"; };
+            Assert.equals(veh.hello(), "hello");
+
+            // get properties descriptors
+
+            var account = Object.create(Object.prototype, {
+                name: {
+                    writable: true,
+                    configurable: false,
+                    enumerable: true,
+                    value: "Linus"
+                }
+            });
+
+            var descriptor = Reflect.getOwnPropertyDescriptor(account, "name");
+            Assert.equals(descriptor.writable, true);
+            Assert.equals(descriptor.configurable, false);
+            Assert.equals(descriptor.enumerable, true);
+            Assert.equals(descriptor.value, "Linus");
+
+
+            // get property
+            var box = {
+                width: 12,
+                height: 10,
+                depth: 6
+            };
+            Assert.equals(Reflect.get(box, "width"), 12);
+
+            // set property
+            Reflect.set(box, "color", "red");
+            Assert.equals(box.color, "red");
+
+            // define property
+            Reflect.defineProperty(box, "name", {
+                value: "boite",
+                writable: true,
+                configurable: true,
+                enumerable: true
+            });
+            Assert.equals(box.name, "boite");
+
+
+            // set prototype
+            class Package {
+                sent() { return true; }
+            }
+            Reflect.setPrototypeOf(box, Package.prototype);
+            Assert.isTrue( box.sent() );
+
+
+            // prevent extension
+            Reflect.preventExtensions(box);
+            // this property creation is silently discarded
+            box.id = 123;
+            Assert.isUndefined(box.id);
+
+
+            // execute a function setting this
+            function vat(v) {
+                return this * (100 + v) / 100;
+            }
+            Assert.equals( Reflect.apply(vat, 10, [20]), 12);
+            Assert.equals( Function.prototype.apply.call(vat, 10, [20]), 12);
+
+            class Bike {
+                constructor(brand, model) {
+                    this.brand = brand;
+                    this.model = model;
+                }
+            }
+            var monster = Reflect.construct(Bike, ['Ducati', 'Monster']);
+
+            // construct an object and assing another class as prototype
+            class Sidecar {}
+            var harley = Reflect.construct(Bike, ['Harley', 'SCar'], Sidecar);
+            Sidecar.prototype.maxPeople = 3;
+            Assert.equals(harley.maxPeople, 3);
+
+
+            let html = PrettyPrint.toHtml(document.getElementById("a").innerHTML, 12);
+            document.getElementById("code").innerHTML = html;
+
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

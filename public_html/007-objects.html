@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>objects</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // empty object
+            var empty = {};
+
+
+            // simple object
+            var person = {
+                name: "Francesco",
+                tel: "01234556"
+            };
+            Assert.equals(person.name, "Francesco");
+            Assert.equals(person.tel, "01234556");
+
+
+            // nesting objects
+            var company = {
+                name: "Disney",
+                address: {
+                    city: "Chicago",
+                    street: "Boulevar Street"
+                }
+            };
+            Assert.equals(company.address.city, "Chicago");
+
+            // access properties as an associative array
+            Assert.equals(company['name'], "Disney");
+
+            // creation by addition
+            var car = {};
+            car.stereo = true;
+            car.hp = 120;
+
+            Assert.isTrue(car.stereo, "car.stereo");
+            Assert.equals(car.hp, 120, "car.hp");
+
+            // watch out for typos!!
+            Assert.isFalse(car.stero, "ster_o");
+            Assert.isUndefined(car.stero, "ster_o");
+
+
+            // methods
+
+            var course = {
+                votes: [],
+                isPassed: function() {
+                    var sum = 0;
+                    // 'this' must be used to refer to members
+                    for (v of this.votes) {
+                        sum += v;
+                    }
+                    return (sum / this.votes.length) > 5;
+                }
+            };
+            course.votes = [3, 7, 8];
+            Assert.isTrue( course.isPassed() );
+
+
+            // Object
+            var family = new Object();
+            family.mother = "Barbara";
+            family.father = "Robert";
+            family.children = 4;
+            Assert.equals(family.mother, "Barbara");
+
+            // toString()
+            family.toString = function() {
+                return this.mother + " & " + this.father + " => " + this.children;
+            };
+
+            Assert.equals(family.toString(), "Barbara & Robert => 4");
+
+
+            // this context
+
+            var contact = {
+                name: 'Francesco',
+                surname: 'Illuminati',
+                fullName: function(salute) {
+                    return salute + " " + this.name + " " + this.surname;
+                }
+            };
+
+            // simply calling the method on the object
+            Assert.equals(contact.fullName("Mr."), 'Mr. Francesco Illuminati');
+
+            var user = {
+                name: "John",
+                surname: "Doe"
+            };
+
+            function say(func, ...params) {
+                return func(params);
+            }
+
+            // passing the function as a parameter, it loses its context (contact)
+            var hello = say(contact.fullName, "Hello");
+
+            // contact.fullName is called out of the context of contact
+            Assert.differs(hello, "Hello Francesco Illuminati");
+
+            // assigning this using call()
+            function sayWithCall(obj, func) {
+                return func.call(obj, "Mr.");
+            }
+
+            Assert.equals(sayWithCall(contact, contact.fullName),
+                            "Mr. Francesco Illuminati");
+            Assert.equals(sayWithCall(user, contact.fullName),
+                            "Mr. John Doe");
+
+
+            // assigning this using apply()
+            function sayWithApply(obj, func) {
+                return func.apply(obj, ["Mr."]);
+            }
+            Assert.equals(sayWithApply(contact, contact.fullName),
+                            "Mr. Francesco Illuminati");
+            Assert.equals(sayWithApply(user, contact.fullName),
+                            "Mr. John Doe");
+
+
+            // using bind
+            var helloUser = say(contact.fullName.bind(user, "Mr."));
+            Assert.equals(helloUser, "Mr. John Doe");
+
+            var helloContact = say(contact.fullName.bind(contact, "Mr."));
+            Assert.equals(helloContact, "Mr. Francesco Illuminati");
+
+
+            Log.end("log");
+        </script>
+
+    </body>
+</html>

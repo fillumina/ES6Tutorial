@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>classes</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // definition of class (ES-6 only)
+
+            class Contact {
+                constructor(name, surname) {
+                    this.name = name;
+                    this.surname = surname;
+                    this._email = null;
+                }
+
+                fullName() {
+                    return this.name + " " + this.surname;
+                }
+
+                get email() {
+                    return this._email;
+                }
+
+                set email(value) {
+                    var emailRegExp = /\w+@\w+\.\w{2,4}/i;
+                    if (emailRegExp.test(value)) {
+                        this._email = value;
+                    } else {
+                        throw new Error("invalid email: '" + value + "'");
+                    }
+                }
+            }
+
+            // instantiate an object using the constructor
+            var franco = new Contact("Franco", "Rossi");
+            Assert.equals(franco.fullName(), "Franco Rossi");
+
+
+            // extends a class
+
+            class Develop extends Contact {
+                constructor(name, surname, ...languages) {
+                    super(name, surname);
+                    this._languages = languages;
+                }
+
+                get languages() {
+                    return this._languages;
+                }
+
+                set languages(value) {}
+            }
+
+            var linus = new Develop("Linus", "Torvalds", "C", "C++", "ASM");
+            Assert.equals(linus.languages[0], "C");
+            Assert.equals(linus.languages[1], "C++");
+            Assert.equals(linus.languages[2], "ASM");
+
+            Log.end("log");
+        </script>
+
+    </body>
+</html>

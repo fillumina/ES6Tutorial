@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Objects 2</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // adding and removing properties
+
+
+            var person = {
+                name: "Francesco"
+            };
+            // objectifies person, if person is already an object return it
+            var obj = new Object(person);
+            Assert.equals(person, obj);
+            Assert.equals(obj.name, person.name);
+
+            // changes both objects
+            obj.name = "Andrea";
+            Assert.equals(person.name, "Andrea");
+            Assert.equals(obj.name, "Andrea");
+
+            // adding property
+            Assert.isUndefined(obj.tel);
+            obj.tel = "00512345";
+
+            Assert.equals(obj.tel, "00512345");
+
+            // removing property
+            delete obj.tel;
+            Assert.isUndefined(obj.tel);
+
+            // adding property with unusual name
+            obj["space and ="] = "";
+            Assert.equals(obj["space and ="], "");
+
+            // removing property with unusual name
+            obj["space and ="] = undefined;
+            Assert.isUndefined(obj["space and ="]);
+
+
+            // constructor
+
+            function Employee(n, t) {
+                this.name = n;
+                this.tel = t;
+                this.toString = function() {
+                    return this.name + ": " + this.tel;
+                };
+            };
+
+            var carlo = new Employee("Carlo", "01234");
+            Assert.equals(carlo.toString(), "Carlo: 01234");
+
+            var nicola = new Employee("Nicola", "05678");
+            Assert.equals(nicola.toString(), "Nicola: 05678");
+
+
+            // prototype
+            function Contact(n, t) {
+                this.name = n;
+                this.tel = t;
+                this.toString= function() {
+                    return this.name + ": " + this.tel;
+                };
+            };
+
+            var pippo = new Contact("Pippo", "01");
+            Assert.equals(pippo.toString(), "Pippo: 01");
+
+            var enea = new Contact("Enea", "02");
+            Assert.equals(enea.toString(), "Enea: 02");
+
+            // adding a method via prototype adds it to all constructed objects
+            Contact.prototype.initial = function() {
+                return this.name[0];
+            };
+
+            Assert.equals(pippo.initial(), "P");
+            Assert.equals(enea.initial(), "E");
+
+            Log.end("log");
+        </script>
+
+    </body>
+</html>

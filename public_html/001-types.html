@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>001 Variable Types</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+
+            // undefined
+
+            try {
+                Assert.isNotNull(u1);  //<-- u1 is not defined
+                Assert.fail();
+            } catch(e) {
+                // x is undefined
+            }
+
+            var u2 = undefined;
+            Assert.isUndefined(u2);
+
+            // u3 is defined later on in the code, here it exists undefined
+            // because of hoisting (all variables are declared at the beginning
+            // of code block notwithstanding where they are actually defined)
+            Assert.isUndefined(u3);
+            var u3 = 'defined';
+
+            // null is an object
+
+            u = null;
+            Assert.isNull(u);
+            Assert.isObject(u);
+
+
+            // strings
+
+            s1 = 'this is a string terminated with "quotes"';
+            Assert.isString(s1);
+
+            s2 = "this is a string terminated with 'double-quotes'";
+            Assert.isString(s2);
+
+            s3 = "this is a string with a \t tab";
+            Assert.isString(s3);
+
+
+            // numbers
+
+            n1 = 12;
+            Assert.isNumber(n1);
+            Assert.isTrue( isFinite(n1) ); // isFinite() is JS predefinite
+
+            n2 = 12.34;
+            Assert.isNumber(n2);
+
+            n3 = 1234E-2;
+            Assert.isNumber(n3);
+
+            n4 = -12;
+            Assert.isNumber(n4);
+
+            n5 = 0;
+            Assert.isNumber(n5);
+
+            n6 = +Infinity;
+            Assert.isNumber(n6);
+            Assert.isFalse( isFinite(n6) );
+
+            n7 = -Infinity;
+            Assert.isNumber(n7);
+            Assert.isFalse( isFinite(n7) );
+
+            n8 = NaN;
+            Assert.isNumber(n8);
+            Assert.isTrue( isNaN(n8) );  // isNaN() is JS predefinite
+            Assert.isFalse( isFinite(n8) ); // isFinite() is JS predefinite
+
+            octal = 012;
+            Assert.equals(octal, 10);
+            Assert.isNumber(octal);
+
+            exadecimal = 0xA1F;
+            Assert.equals(exadecimal, 2591);
+            Assert.isNumber(exadecimal);
+
+            Assert.equals(-0, +0);
+
+            n9 = parseInt("123.456");  // parseInt() is JS predefinite
+            Assert.equals(n9, 123);
+
+            n10 = parseFloat("123.456"); // parseFloat() is JS predefinite
+            Assert.equals(n10, 123.456);
+
+
+            // booleans
+
+            b1 = true;
+            Assert.isTrue(b1);
+            Assert.isBoolean(b1);
+
+            b2 = false;
+            Assert.isFalse(b2);
+            Assert.isBoolean(b2);
+
+            b3 = 12;
+            Assert.isTrue(b3);
+            Assert.isNumber(b3);
+
+            b4 = 0;
+            Assert.isFalse(b4);
+            Assert.isNumber(b4);
+
+            b7 = NaN;
+            Assert.isFalse(b7);
+            Assert.isNumber(b7);
+
+            b5 = "";
+            Assert.isFalse(b5);
+            Assert.isString(b5);
+
+            b6 = "false";
+            Assert.isTrue(b6);
+            Assert.isString(b6);
+
+
+            // the same variable might contain different types of data in time
+
+            v = "a string";
+            Assert.isString(v);
+
+            v = 12;
+            Assert.isNumber(v);
+
+            v = null;
+            Assert.isObject(v);
+
+            v = undefined;
+            Assert.isUndefined(v);
+
+            v = false;
+            Assert.isBoolean(v);
+
+
+            // conversions
+
+            var x = "12";
+
+            var y = x + 1;
+            Assert.equals(y, "121");
+            Assert.isString(y);
+
+            var y = x * 2;
+            Assert.equals(y, 24);
+            Assert.isNumber(y);
+
+            var y = x * "2";
+            Assert.equals(y, 24);
+            Assert.isNumber(y);
+
+
+            // if there is a string with + everything AFTER THAT is a string
+            var z = 1 + 2 + 3 + "4";
+            Assert.equals(z, "64");
+
+            z = "1" + 2 + 3 + 4;
+            Assert.equals(z, "1234");
+
+
+            // default value
+
+            var w;
+            w = w || 5;
+            Assert.equals(w, 5);
+
+            w = w || 7;
+            Assert.equals(w, 5);
+
+            Log.end("log");
+        </script>
+
+    </body>
+</html>

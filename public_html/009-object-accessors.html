@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>object's accessors</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // create an object via Object.create()
+
+            var person = function() {
+                this.age = 12;
+            };
+            person.prototype.name = "";
+            person.prototype.tel = "";
+            person.prototype.initial = function() {
+                return this.name[0];
+            };
+
+            // create a new object from a prototype
+            var pippo = Object.create(person.prototype);
+            // person.age is not part of its prototype so it's not inherited
+            Assert.isUndefined(pippo.age);
+            Assert.equals(pippo.name, "");
+            Assert.equals(pippo.tel, "");
+
+            Assert.differs(pippo, Object.create(person.prototype));
+
+            // using creation with assignation
+            var enea = Object.create(person.prototype, {
+                name: {value: "Enea"},
+                tel: {value: "0912345"}
+            });
+            Assert.isUndefined(pippo.age);
+            Assert.equals(enea.name, "Enea");
+            Assert.equals(enea.tel, "0912345");
+            Assert.equals(enea.initial(), "E");
+
+
+            // properties' descriptors
+
+
+            var zeno = Object.create(person.prototype, {
+                // used as backend for 'name' property
+                _name: {
+                    // can add new properties here
+                    writable: true,
+                    configurable: false,
+                    enumerable: false,
+                    value: null
+                },
+                name: {
+                    configurable: true,
+                    enumerable: true,
+                    set: function(value) {
+                        if (value === null || value === null || value === "") {
+                            throw new Error("name must be not null");
+                        }
+                        this._name = "" + value;
+                    },
+                    get: function() {
+                        if (this._name === null) {
+                            return undefined;
+                        }
+                        return "Mr. " + this._name;
+                    }
+                },
+                tel: {
+                    writable: false,
+                    configurable: true,
+                    enumerable: true,
+                    value: "061234"
+                }
+            });
+
+            try {
+                zeno.name = null;
+                Assert.fail();
+            } catch (e) {
+                // ok
+            }
+
+            zeno.name = "Zeno";
+            Assert.equals(zeno.name, "Mr. Zeno");
+
+            // zeno.tel is not writable, changes will be silently discarded
+            zeno.tel = 1000;
+            Assert.equals(zeno.tel, "061234");
+
+
+            // call base constructor in extended object using functions
+
+            // base class
+            var User = function(id, pass) {
+                this.id = id;
+                this.pass = pass;
+            };
+            User.prototype.authenticate = function(p) {
+                return this.pass === p;
+            };
+
+            var pippo = new User(1, "1234");
+            Assert.isTrue(pippo.authenticate("1234"));
+
+            // extended class
+            var Devel = function(id, pass, ...languages) {
+                // create user as it is this (adding its properties)
+                User.call(this, id, pass);
+
+                // add devel's own properties here
+                this.languages = languages;
+            };
+
+            // devel still hasn't authenticate
+            var linus = new Devel(0, "xyzw");
+            Assert.isUndefined(linus.authenticate);
+
+            // set a copy of the user's prototype as devel's prototype
+            Devel.prototype = Object.create(User.prototype);
+
+            Assert.isTrue(linus.authenticate("xyzw"));
+
+            Log.end("log");
+        </script>
+
+    </body>
+</html>
