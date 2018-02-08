@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>dom</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div id="alfa">...</div>
+        <ul id="beta">
+            <li>one</li>
+            <li>two</li>
+            <li>three</li>
+        </ul>
+
+        <div id="main">
+            <h1>title</h1>
+            <p>paragraph1</p>
+            <p>paragraph2</p>
+        </div>
+
+        <ol id="log"></ol>
+        <script id="assertion" type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // select by ID
+            var div = document.getElementById("alfa");
+            div.innerHTML = "I was here!";
+
+            // select by TAG
+            var list = document.getElementsByTagName("LI");
+            Assert.isTrue(list.length > 0);
+
+            // get all LIs
+            var options = document.querySelectorAll("ul#beta > li");
+            var index = 0;
+            for (let li of options) {
+                li.innerHTML = (index++);
+            }
+
+            // get only the first LI
+            document.querySelector("ul#beta > li").innerHTML = "first";
+
+            // set an attribute
+            div.setAttribute("data-one", "some value");
+            Assert.equals(div.getAttribute("data-one"), "some value");
+            Assert.isTrue(div.hasAttribute("data-one"));
+
+            // using .id access
+            Assert.equals(div.id, "alfa");
+
+            // adding a JS property it's not an attribute
+            div.someProperty = 12;
+            Assert.equals(div.someProperty, 12);
+            Assert.isFalse(div.hasAttribute('someProperty'));
+
+            // difference between attribute src and property src
+            var script = document.getElementById("assertion");
+            Assert.differs(script.src, script.getAttribute("src"));
+            Logger.log("log", "property src", script.src);
+            Logger.log("log", "attribute src", script.getAttribute("src"));
+
+
+            // navigate the DOM
+            var main = document.getElementById("main");
+            for (var e of main.childNodes) {
+                Logger.log("log", "content", e.tagName + " => " + e.innerHTML);
+            }
+
+            // create a new element
+            var img = document.createElement("img");
+            img.setAttribute("src",
+                "https://www.google.it/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
+            main.appendChild(img);
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

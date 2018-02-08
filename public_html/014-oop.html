@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>OOP</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // Incapsulation
+
+            // with object and classes it's impossible, functions allow that:
+            var incapsulatedObj = function(value) {
+                var privateVar = value;
+
+                this.setVar = function(value) { privateVar = value; };
+                this.getVar = function() { return privateVar; };
+            };
+            var obj = new incapsulatedObj();
+            obj.setVar(12);
+            Assert.equals(obj.getVar(), 12);
+            Assert.isUndefined(obj.privateVar);
+
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

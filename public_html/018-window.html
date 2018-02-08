@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>browser window</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // window dimensions
+
+            Logger.log("log", "windows screen width",
+                window.screen.availWidth);
+            Logger.log("log", "windows screen height",
+                window.screen.availHeight);
+
+
+            // pop-ups
+            var confirmed = confirm("Do you agree?");
+            Logger.log("log", "confirmed", confirmed);
+
+            alert("this is an alert");
+
+            var answer = prompt("Give your answer");
+            Logger.log("log", "prompt", answer);
+
+            //window.open("index.html", "_blank");
+
+            // location
+            Logger.log("log", "location", window.location.href);
+
+            function getParameters() {
+                var paramData = [];
+                var parameters = {};
+                var param;
+
+                if (window.location.search.length > 0) {
+                    paramData = window.location.search.split("?")[1].split("&");
+
+                    for(var i = 0; i < paramData.length; i++) {
+                        param = paramData[i].split("=");
+                        parameters[param[0]] = param[1];
+                    }
+                }
+                return parameters;
+            }
+            Logger.log("log", "params", JSON.stringify(getParameters()));
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

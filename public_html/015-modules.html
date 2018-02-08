@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>modules</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+
+        <ul>
+            <li>
+                <a href="https://caniuse.com/#feat=es6-module">
+                    Check this link to see &ltscript type="module"> compatibility.
+                </a>
+            </li>
+            <li>
+                <a href="https://medium.com/dev-channel/es6-modules-in-chrome-canary-m60-ba588dfb8ab7">
+                    Good page about modules
+                </a>
+            </li>
+            <li>
+                <a href="https://jakearchibald.com/2017/es-modules-in-browsers/">
+                    Another in deep analysis of modules
+                </a>
+            </li>
+        </ul>
+
+        <script type="module" src="imported-module-via-src.js"></script>
+        <script type="module">
+            import * as Module from "./imported-module.js";
+
+            Assert.isUndefined(Module.privateVariable);
+
+            Assert.equals(Module.exportedVariable, "Exported Variable");
+
+            Assert.isUndefined(Module.privateFunction);
+
+            Assert.equals(Module.exportedFunction(), "Exported Function");
+
+            try {
+                var obj = new Module.PrivateClass();
+                Assert.fail();
+            } catch (e) {
+                // ok, PrivateClass is not exported
+            }
+
+            var obj = new Module.PublicClass();
+            Assert.equals(typeof obj, "object");
+
+            Assert.equals(Module.otherExportedVariable1,
+                    "Other Exported Variable 1");
+
+            Assert.isUndefined(Module.privateObject);
+
+            Assert.equals(Module.exportedObject.name, "Exported Object");
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>decorator</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // simple decorator (ECMASCRIPT 7, not available yet on chrome)
+            function log(target) {
+                Logger.log("log", "" + target.name + ": " + arguments);
+                var result = target(arguments);
+                Logger.log("log", "after:" + target.name + ": " + result);
+                return result;
+            }
+
+            class NicePerson {
+                constructor(name) {
+                    this.name = name;
+                }
+
+//                @log
+                addTitle() {
+                    return "Mr." + this.name;
+                }
+            }
+
+            var tom = new NicePerson("Tom");
+            tom.addTitle();
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

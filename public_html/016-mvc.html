@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MVC</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <!-- VIEW -->
+        <label for="txtName">Name:</label>
+        <input id="txtName" type="text" value=""/>
+        <br/>
+        <label for="txtSurname">Surname:</label>
+        <input id="txtSurname" type="text" value=""/>
+        <br/>
+        <button id="btnSave">Save</button>
+        <br/>
+
+        <ol id="log"></ol>
+
+
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // MODEL
+            var model = {
+                name: "",
+                surname: ""
+            };
+
+            // VIEW (connect with HTML)
+            var view = {
+                txtName: document.getElementById("txtName"),
+                txtSurname: document.getElementById("txtSurname"),
+                btnSave: document.getElementById("btnSave")
+            };
+
+            // CONTROLLER
+            var controller = {
+                init: function() {
+                    view.txtName.value = model.name;
+                    view.txtSurname.value = model.surname;
+                    view.btnSave.onclick = this.save;
+                },
+
+                save: function() {
+                    model.name = view.txtName.value;
+                    model.surname = view.txtSurname.value;
+                    // ... send model to server
+                    Logger.log("log", "model=" + JSON.stringify(model));
+                }
+            };
+
+            controller.init();
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>
