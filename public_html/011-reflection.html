@@ -156,6 +156,10 @@
             Sidecar.prototype.maxPeople = 3;
             Assert.equals(harley.maxPeople, 3);
 
+            var floatNumber = 1.234;
+            var expNumber = -1.2E-3;
+            var multiLineTest = `hello
+                world! and function`;
 
             let html = PrettyPrint.toHtml(document.getElementById("a").innerHTML, 12);
             document.getElementById("code").innerHTML = html;

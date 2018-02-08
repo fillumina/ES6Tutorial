@@ -25,6 +25,7 @@ var PrettyPrint = {
         var result = "<DIV style='" + style + "'>\n";
         var quote = false;
         var doublequote = false;
+        var mlQuote = false;
         var start = 0;
         var comment = false;
         var mlComment = false;
@@ -32,6 +33,9 @@ var PrettyPrint = {
         var l = code.length;
         for (var i=0; i<l; i++) {
             var c = code[i];
+
+            var quoted = quote || doublequote || mlQuote;
+            var commented = comment || mlComment;
 
             if (!mlComment && c == "/" && i<l && code[i+1] == "*") {
                 mlComment = true;
@@ -45,10 +49,24 @@ var PrettyPrint = {
                 start = i + 2;
                 i++;
 
-            } else if (!comment && !mlComment && c == "/" && i<l && code[i+1] == "/") {
-                    comment = true;
+            } else if (!commented && !quote && !doublequote && c == "`") {
+                if (mlQuote) {
+                    if (i - start > 0) {
+                        result += this.span(color.quote) +
+                                code.slice(start, i+1) + "</span>";
+                    }
+                    mlQuote = false;
+                    start = i + 1;
+                } else {
+                    mlQuote = true;
                     start = i;
-                    i++;
+                }
+                i++;
+
+            } else if (!commented && c == "/" && i<l && code[i+1] == "/") {
+                comment = true;
+                start = i;
+                i++;
 
             } else if (!doublequote && !comment && !mlComment && c == "'") {
                 if (quote) {
@@ -84,6 +102,10 @@ var PrettyPrint = {
                     result += this.span(color.comment) + code.slice(start, i) +
                             "</span>";
 
+                } else if (mlQuote) {
+                    result += this.span(color.quote) + code.slice(start, i) +
+                            "</span>";
+
                 } else if (i - start > 0) {
                     result += this.markWord(code.slice(start, i), keywords,
                             color.keyword);
@@ -103,7 +125,7 @@ var PrettyPrint = {
                     start = i + 1;
                 }
 
-            } else if (!quote && !doublequote && !comment && !mlComment) {
+            } else if (!quoted && !commented) {
                 if ("{}=+-/*~!@#$%^&()[]\\;:<>?.,`".indexOf(c) != -1) {
                     if (i - start > 0) {
                         result += this.markWord(code.slice(start, i),
@@ -113,16 +135,23 @@ var PrettyPrint = {
                     start = i + 1;
 
                 } else if ("0123456789".indexOf(c) != -1) {
-                    if (i + 1 - start > 0) {
-                        let w = code.slice(start, i+1);
-                        if (/^\d+$/.test(w)) {
+                    let j=1;
+                    for (; j<l-i; j++) {
+                        if ("0123456789+-.Ee".indexOf(code[i+j]) == -1) {
+                            break;
+                        }
+                    }
+                    if (i + j - start > 0) {
+                        let w = code.slice(start, i+j);
+                        if (/-?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?/.test(w)) {
                             result += this.span(color.number) + w + "</span>";
                         } else {
                             result += this.markWord(code.slice(start, i),
                                     keywords, color.keyword);
                         }
+                        start = i + j;
+                        i += j - 1;
                     }
-                    start = i + 1;
 
                 } else if (c == " ") {
                     if (i - start > 0) {
