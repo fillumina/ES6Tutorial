@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>forms</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="#" method="dialog" name="myForm">
+            <label for="user">User:</label>
+            <input name="user" type="text"  minlength="3" maxlength="25" required>
+            <br>
+            <label for="pass">Pass: (123x)</label>
+            <input name="pass" type="text" pattern="\d{1,4}\a" required>
+            <br>
+            <label for="fullname">Full Name:</label>
+            <input name="fullname" type="text" minlength="2" maxlength="25" required>
+            <br>
+            <label for="age">Age:</label>
+            <input name="age" type="number" value="25" min="18" max="80">
+            <br>
+            <label for="email">Email:</label>
+            <input name="age" type="email" >
+            <br>
+            <button id=validate type="submit">Validate</button>
+        </form>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+
+            function getErrors(validity) {
+                var errors = [];
+                for (i in validity) {
+                    let failed = validity[i];
+                    if (failed) {
+                        errors.push(i);
+                    }
+                }
+                return errors;
+            }
+
+            var form = document.forms.myForm;
+            var validateBtn = document.getElementById("validate");
+            validateBtn.onclick = function() {
+                let validForm = true;
+                for (i of form.childNodes) {
+                    if (i.tagName == "INPUT") {
+                        let valid = i.validity.valid;
+                        validForm = validForm && valid;
+                        if (!valid) {
+                            Logger.log("log", i.name, getErrors(i.validity));
+                        }
+                    }
+                }
+                Logger.log("log", "validity", validForm);
+            };
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

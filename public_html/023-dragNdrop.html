@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Drag &amp; drop</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div id="draggable1" draggable="true" 
+            style="height:100px;width:100px;margin:10px;background-color:red;"></div>
+        <div id="draggable2" draggable="true" 
+            style="height:100px;width:100px;margin:10px;background-color:green"></div>
+
+        <div id="dragTarget" 
+            style="height:400px;width:400px;margin:10px;border: solid black 1px;"></div>
+    
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            function startDrag(e) {
+                e.dataTransfer.setData("text", e.target.id);
+            };
+
+            var draggable1 = document.getElementById("draggable1");
+            draggable1.ondragstart = startDrag;
+            var draggable2 = document.getElementById("draggable2");
+            draggable2.ondragstart = startDrag;
+
+            var dragTarget = document.getElementById("dragTarget");
+            dragTarget.ondragover = function(e) {
+                // needed to allow the drop operation
+                e.preventDefault();
+            };
+
+            dragTarget.ondragenter = function() {
+                dragTarget.style.backgroundColor = "lightblue";
+            };
+
+            dragTarget.ondragleave = function() {
+                dragTarget.style.backgroundColor = "white";
+            };
+
+            dragTarget.ondrop = function(e) {
+                dragTarget.style.backgroundColor = "white";
+                var data = e.dataTransfer.getData("text");
+                e.target.appendChild(document.getElementById(data));
+            };
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

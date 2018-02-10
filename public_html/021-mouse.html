@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>mouse</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <p id='hoverable-paragraph'>
+            Hover the mouse over this to fire an 'entering' event
+            <i>children fires a new event</i>
+        </p>
+        <p id='hoverable-components'>
+            Hover the mouse over this to fire an 'overing' event
+            <i>children don't fire new events</i>
+        </p>
+        <p id="clickable-area">
+            click here with the right button to see a customized context menu    
+        </p>
+        <div id="menu" style="height:100px;width:50px;visibility:hidden;background:cyan">
+            this is a context menu
+        </div>
+        <div id="mouse-move-show">...</div>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+
+            // capture entering
+            var p1 = document.getElementById("hoverable-paragraph");
+            p1.onmouseenter = function(event) {
+                Logger.log("log", "entering", event.target.tagName);
+            };
+            p1.onmouseleave = function(event) {
+                Logger.log("log", "leaving", event.target.tagName);
+            };
+
+            // capture hovering
+            var p2 = document.getElementById("hoverable-components");
+            p2.onmouseover = function(event) {
+                Logger.log("log", "over", event.target.tagName);
+            };
+            p2.onmouseout = function(event) {
+                Logger.log("log", "out", event.target.tagName);
+            };
+
+            // mouse buttons
+            document.getElementById("clickable-area").onmousedown = function(e) {
+                e.preventDefault(); // so the menu on right mouse btn shouldn't appear
+                let descr = "";
+                switch(e.button) {
+                    case 0: descr = "left"; break;
+                    case 1: descr = "center"; break;
+                    case 2: descr = "right"; break;
+                    default: descr = "unknown";
+                }
+                Logger.log("log", "clicked mouse button", descr);
+            };
+
+            // mouse position
+            var position = document.getElementById("mouse-move-show");
+            document.onmousemove = function(e) {
+                position.innerHTML = 
+                    `clientX = ${e.clientX}, clientY = ${e.clientY}<br />
+                    pageX = ${e.pageX}, pageY = ${e.pageY}`;
+            };
+
+
+            // context menu
+            document.getElementById("clickable-area").oncontextmenu = function(e) {
+                var myMenu = document.getElementById("menu");
+                
+                myMenu.style.position = "absolute";
+                myMenu.style.left = e.pageX + "px";
+                myMenu.style.top = e.pageY + "px";
+                myMenu.style.visibility = "visible";
+                
+                e.preventDefault();
+            };
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

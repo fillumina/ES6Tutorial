@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>observer</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div id="mutant"></div>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+
+            var mutationManager = function(mutationRecords) {
+                for (r of mutationRecords) {
+                    Logger.log("log", r.type, r.attributeName, r.oldValue);
+                }
+            };
+
+            var observer = new MutationObserver(mutationManager);
+
+            var div = document.getElementById("mutant");
+            observer.observe(div, {
+                // must contains only true values
+                attributes: true,
+                attributeOldValue: true,
+                // characterData: true,
+                // characterDataOldValue: true,
+                // childList: true,
+                // subtree: true,       
+                // attributeFilter: true  // arrays of names of attributes to observe
+            });
+
+            div.setAttribute("data-try", "hello world");            
+            div.setAttribute("data-try", null);            
+
+            setTimeout(function() {
+                observer.disconnect();
+
+                // this one should not appear on the log
+                div.setAttribute("data-another", "hello world");
+
+                Logger.log("log", "timer", "finished OK!");
+            }, 500);
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

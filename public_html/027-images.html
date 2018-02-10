@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>images</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div id='image-container'></div>
+        <br>
+        
+        <svg id="svgImg" style='width:auto;border:solid 1px black'>
+            <circle id="circle"
+                    cx="100" cy="100" r="50"
+                    style="stroke: #000000; fill: #00ff00;" />
+        </svg>
+        <br>
+        
+        <canvas id="myCanvas" width="300px" height="200px"
+                style='width:auto;border:solid 1px black'>
+            Text to show to older browsers and web-spiders ;-)
+        </canvas>
+        <br>
+
+        <ol id="log"></ol>
+
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript">
+            // preload an img with the Image object
+            var img = new Image();
+            img.src = "images/zerotalent.jpg";
+            document.getElementById("image-container").appendChild(img);
+
+            // animate a SVG
+            var svgImg = document.getElementById("svgImg");
+            var circle = document.getElementById("circle");
+            var direction = 1;
+            var timer = setInterval(function() {
+                circle.cx.baseVal.value += direction * 10;
+                if (circle.cx.baseVal.value + circle.r.baseVal.value > 
+                        svgImg.width.baseVal.value ||
+                    circle.cx.baseVal.value < circle.r.baseVal.value) {
+                    direction = -direction;
+                }
+            }, 50);
+
+            // accessing the canvas
+            var myCanvas = document.getElementById("myCanvas");
+            var context = myCanvas.getContext("2d");
+
+            // loading an img into a canvas
+            var img = new Image();
+            img.onload = function() {
+                context.drawImage(img, 0, 0);
+            };
+            img.src = "images/zerotalent.jpg";             
+
+            // drawing into a canvas
+            setTimeout(function() {
+                // needed to allow the img to be drawed first
+                context.beginPath();
+                context.arc(100, 100, 50, 0, 2 * Math.PI);
+                context.fillStyle = "#00ff00";
+                context.fill();
+                context.strokeStyle = "#000000";
+                context.stroke();
+            }, 200);
+
+            Logger.end("log");
+        </script>
+
+    </body>
+</html>

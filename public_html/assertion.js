@@ -25,7 +25,7 @@ var Logger = {
 
     end(id) {
         console.log("finished OK!");
-        this.log(id, "finished", "OK!");
+        this.log(id, "finished", "<span style='color:green'>OK!</span>");
     }
 };
 

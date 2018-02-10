@@ -66,6 +66,27 @@
                 Logger.log("log", "content", e.tagName + " => " + e.innerHTML);
             }
 
+            // siblings
+
+            // returns the first ELEMENT
+            var h1 = main.firstElementChild;
+            Assert.equals(h1.tagName, "H1");
+
+            // returns the first NODE (in this cas an empty text node)
+            var node = main.firstChild;
+            Assert.equals(node.nodeName, "#text");
+
+            // all sibilings including itself
+            var h1Siblings = h1.parentNode.childNodes;
+            Assert.differs(1, h1Siblings.length);
+
+            // iterate through siblings
+            [].forEach.call(h1Siblings, function(elem) {
+                if (elem.nodeName != "#text") {
+                    elem.style = "color: red";
+                }
+            });
+
             // create a new element
             var img = document.createElement("img");
             img.setAttribute("src",
