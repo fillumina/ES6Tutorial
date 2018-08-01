@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>browser window</title>
+        <title>018 browser window</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // window dimensions
 
             Logger.log("log", "windows screen width",
@@ -49,6 +50,7 @@
             Logger.log("log", "params", JSON.stringify(getParameters()));
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

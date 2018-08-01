@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>mouse</title>
+        <title>021 mouse</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -15,7 +15,7 @@
             <i>children don't fire new events</i>
         </p>
         <p id="clickable-area">
-            click here with the right button to see a customized context menu    
+            click here with the right button to see a customized context menu
         </p>
         <div id="menu" style="height:100px;width:50px;visibility:hidden;background:cyan">
             this is a context menu
@@ -23,7 +23,8 @@
         <div id="mouse-move-show">...</div>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
 
             // capture entering
             var p1 = document.getElementById("hoverable-paragraph");
@@ -59,7 +60,7 @@
             // mouse position
             var position = document.getElementById("mouse-move-show");
             document.onmousemove = function(e) {
-                position.innerHTML = 
+                position.innerHTML =
                     `clientX = ${e.clientX}, clientY = ${e.clientY}<br />
                     pageX = ${e.pageX}, pageY = ${e.pageY}`;
             };
@@ -68,16 +69,17 @@
             // context menu
             document.getElementById("clickable-area").oncontextmenu = function(e) {
                 var myMenu = document.getElementById("menu");
-                
+
                 myMenu.style.position = "absolute";
                 myMenu.style.left = e.pageX + "px";
                 myMenu.style.top = e.pageY + "px";
                 myMenu.style.visibility = "visible";
-                
+
                 e.preventDefault();
             };
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

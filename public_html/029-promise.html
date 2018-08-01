@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>029 promise</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+
+            function rnd(probability) {
+                var rnd = Math.random();
+                var winner = rnd <= probability;
+                Logger.log("log", "RND",
+                        "required", probability,
+                        "event", rnd,
+                        winner ? "win" : "lose");
+                return  winner;
+            }
+
+            // this is an example of a promise
+            // the function is only a commodity to create different promises
+            function promise(condition, msg="") {
+                return new Promise( function(resolve, reject){
+                    // it could be an asynchronous task like this
+                    var msg = msg ? msg + " " : "";
+                    setTimeout(function() {
+                        if (condition) {
+                            resolve(msg + "win");
+                        } else {
+                            reject(msg + "lose");
+                        }
+                    }, 10);
+                });
+            }
+
+            var p = promise(rnd(0.5), "example");
+
+            // using the promise with then()
+            p.then(
+                function(msg) {
+                    Logger.log("log", "promise 1", msg);
+                },
+                function(error) {
+                    Logger.log("log", "promise 1", error);
+                }
+            );
+
+            // simplier way with catch()
+            p.then(function(msg) {
+                    Logger.log("log", "promise 2", msg);
+                }).catch(function(error) {
+                    Logger.log("log", "promise 2", error);
+                });
+
+            // note that the promise is executed only once
+
+            // allows to check events happening asynchronously
+            var factory = new ExpectsFactory();
+
+            //https://developers.google.com/web/fundamentals/primers/promises
+            // With then(func1, func2), func1 or func2 will be called,
+            // never both.
+            // But with then(func1).catch(func2), both will be called
+            // if func1 rejects, as they're separate steps in the chain.
+
+            // in fact it executes all 'then' clause successively
+            // until an exception arise and in that case it executes the
+            // first catch next in the serie.
+
+            // if condition is false 'then' clause function will be executed
+            var c1 = factory.expects("c1", "then");
+            promise(true)
+                    .then( function() {
+                        c1.push("then");
+                    }).catch( function() {
+                        c1.push("catch");
+                    });
+
+            // if condition is false 'catch' clause function will be executed
+            var c2 = factory.expects("c2", "catch");
+            promise(false)
+                    .then( function() {
+                        c2.push("then");
+                    }).catch( function() {
+                        c2.push("catch");
+                    });
+
+
+            // multiple 'then' steps will be executed successively, no catch
+            var c3 = factory.expects("c3", "then1", "then2");
+            promise(true)
+                    .then( function() {
+                        c3.push("then1");
+                        return promise(true);
+                    }).then( function() {
+                        c3.push("then2");
+                        return promise(true);
+                    }).catch( function() {
+                        c3.push("catch");
+                    });
+
+
+            // but if it's false then catch we have
+            var c4 = factory.expects("c4", "catch");
+            promise(false)
+                    .then( function() {
+                        c4.push("then1");
+                        return promise(true);
+                    }).then( function() {
+                        c4.push("then2");
+                        return promise(true);
+                    }).catch( function() {
+                        c4.push("catch");
+                    });
+
+            // if we want a cath for a specific then
+            var c14 = factory.expects("c14", "catch1", "then2", "catch2");
+            promise(false)
+                    .then( function() {
+                            c14.push("then1");
+                            return promise(true);
+                        }, function() {
+                            c14.push("catch1");
+                        })
+                    .then( function() {
+                        c14.push("then2");
+                        return promise(false);
+                    }).catch( function() {
+                        c14.push("catch2");
+                    });
+
+            // if the first then is false
+            var c5 = factory.expects("c5", "then1", "catch");
+            promise(true)
+                    .then( function() {
+                        c5.push("then1");
+                        return promise(false);
+                    }).then( function() {
+                        c5.push("then2");
+                        return promise(true);
+                    }).catch( function() {
+                        c5.push("catch");
+                    });
+
+            // if the second then is false
+            var c6 = factory.expects("c6", "then1", "then2", "catch");
+            promise(true)
+                    .then( function() {
+                        c6.push("then1");
+                        return promise(true);
+                    }).then( function() {
+                        c6.push("then2");
+                        return promise(false);
+                    }).catch( function() {
+                        c6.push("catch");
+                    });
+
+            // what about continuing from a catch
+            var c7 = factory.expects("c7", "catch", "then3", "then4");
+            promise(false)
+                    .then( function() {
+                        c7.push("then1");
+                        return promise(true);
+                    }).then( function() {
+                        c7.push("then2");
+                        return promise(false);
+                    }).catch( function() {
+                        c7.push("catch");
+                        return promise(true);
+                    }).then( function() {
+                        c7.push("then3");
+                        return promise(false);
+                    }).catch( function() {
+                        c7.push("then4");
+                    });
+
+            // in absence of new promise to return the old value is used
+            // and all clauses will be executed
+            var c8 = factory.expects("c8", "then1", "then2", "then3");
+            promise(true)
+                    .then( function() {
+                        c8.push("then1");
+                    }).then( function() {
+                        c8.push("then2");
+                    }).then( function() {
+                        c8.push("then3");
+                    }).catch( function() {
+                        // this is not read!
+                        c8.push("catch");
+                    });
+
+
+            // all and race
+
+            // all must be true
+            var c9 = factory.expects("c9", "then");
+            Promise.all([promise(true), promise(true)])
+                        .then( function(results) {
+                            Assert.arrayEquals(results, ["win", "win"]);
+                            c9.push("then");
+                        });
+
+            // if not all promise are true then catch function will be executed
+            var c10 = factory.expects("c10", "catch");
+            Promise.all([promise(false), promise(true)])
+                        .then( function(results) {
+                            c10.push("then");
+                        }).catch (function() {
+                            c10.push("catch");
+                        });
+
+            // the first win and it's the only reported
+            var c11 = factory.expects("c11", "then");
+            Promise.race([promise(true), promise(true)])
+                        .then( function(result) {
+                            // only the result of the winner is passed
+                            Assert.equals(result, "win");
+                            c11.push("then");
+                        }).catch (function() {
+                            c11.push("catch");
+                        });
+
+            // here we have errors so catch is executed
+            var c12 = factory.expects("c12", "catch");
+            Promise.race([promise(false), promise(false)])
+                        .then( function(result) {
+                            c12.push("then");
+                        }).catch (function() {
+                            c12.push("catch");
+                        });
+
+            // then is executed and the error ignored
+            var c13 = factory.expects("c13", "then");
+            Promise.race([promise(true), promise(false)])
+                        .then( function() {
+                            c13.push("then");
+                        }).catch (function() {
+                            c13.push("catch");
+                        });
+
+            factory.checkAllInMs(1000);
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>

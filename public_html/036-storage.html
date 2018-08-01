@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>036 Storage</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+            // check if storage is available in the browser
+            if (typeof(Storage) !== "undefined") {
+                localStorage.user = "Mario Rossi";
+                Assert.equals(localStorage['user'], "Mario Rossi");
+
+                // if using setItem() or getItem() an event is rised
+                window.addEventListener("storage", function(event) {
+                    // doesn't seem to work on Chrome 64
+                    Logger.log("log", "EVENT", JSON.stringify(event));
+                });
+
+                localStorage.setItem("user", "3.14");
+                Assert.equals(localStorage['user'], "3.14");
+
+                localStorage.removeItem("user");
+                Assert.isUndefined(localStorage['user']);
+
+                localStorage.setItem("user", "redefined");
+                Assert.equals(localStorage['user'], "redefined");
+                localStorage.clear();
+                Assert.isUndefined(localStorage['user']);
+            } else {
+                Logger.log("log", "localStorage", "NOT AVAILABLE");
+            }
+
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>

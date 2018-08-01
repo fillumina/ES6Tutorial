@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>030 Iterables &amp; Iterators</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+
+            // make an iterator
+            var iterable = function(from, to, step = 1) {
+                var index = from;
+                return {
+                    next: function() {
+                        var i = index;
+                        index += step;
+                        return i < to ? {value: i, done: false} : {done: true};
+                    }
+                };
+            };
+
+            var result = [];
+            var it = iterable(0, 6, 2);
+            var current = it.next();
+            while (!current.done) {
+                result.push(current.value);
+                current = it.next();
+            }
+            Assert.arrayEquals(result, [0, 2, 4]);
+
+
+            // make an iterable
+            var iterator = function(from, to, step = 1) {
+                this[Symbol.iterator] = function() {
+                    var index = from;
+                    return {
+                        next: function() {
+                            var i = index;
+                            index += step;
+                            return i < to ?
+                                {value: i, done: false} : {done: true};
+                        }
+                    };
+                };
+            };
+
+            var result = [];
+            for (var value of new iterator(0, 6, 2)) {
+                result.push(value);
+            }
+            Assert.arrayEquals(result, [0, 2, 4]);
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>

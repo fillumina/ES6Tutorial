@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>033 Async</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+            // see: https://developers.google.com/web/fundamentals/primers/async-functions
+
+            function getValueAfterMs(value, ms) {
+                return new Promise(function(resolve) {
+                    setTimeout(function() {
+                        resolve(value);
+                    }, ms);
+                });
+            }
+
+            (async function func() {
+                var perf = new Perf();
+
+                // starts all the promises together
+                var promises = [
+                    getValueAfterMs("one", 500),
+                    getValueAfterMs("two", 250),
+                    getValueAfterMs("three", 50)
+                ];
+
+                // collects the promises in order
+                var result3 = [];
+                for (var promise of promises) {
+                    var p = await promise;
+                    result3.push(p);
+                }
+
+                var elapsed = perf.end();
+                Logger.log("log", "ASYNC time", elapsed);
+
+                Assert.arrayEquals(result3, ['one', 'two', 'three']);
+            })();
+
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>

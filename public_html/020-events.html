@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>events</title>
+        <title>020 events</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <p
@@ -9,18 +9,19 @@
         <button id="click-me-button">Click Me</button>
         <button id="remove-event-button">Clear</button>
         <a href="#" onclick="alert(this.innerHTML)">click this link to see an alert</a>
-        <div id="clickable-div">            
+        <div id="clickable-div">
             <p id="clickable-p">click on this paragraph to capture P and DIV events</p>
             <p>click on this to capture only the DIV event</p>
         </div>
-        <div id="clickable-div2">            
+        <div id="clickable-div2">
             <p id="clickable-p2">the DIV event block propagation to P so you see only DIV</p>
             <p>click on this to capture only the DIV event</p>
         </div>
         <a id="stopped-link" href="http://www.google.com">click here to open an alert instead of the link</a>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
 
             // add an event listener
             var clickBtn = document.getElementById("click-me-button");
@@ -40,13 +41,13 @@
             function clicked(event) {
                 Logger.log("log", this.tagName, "click");
             };
-            document.getElementById("clickable-div").onclick = clicked; 
+            document.getElementById("clickable-div").onclick = clicked;
             document.getElementById("clickable-p").onclick = clicked;
-            
+
             document.getElementById("clickable-p2").onclick = clicked;
 
             // capture phase 1 and stop propagation
-            document.getElementById("clickable-div2").addEventListener("click", 
+            document.getElementById("clickable-div2").addEventListener("click",
                 function(event) {
                     Logger.log("log", "DIV", "stop propagation");
                     event.stopPropagation();
@@ -66,6 +67,7 @@
             };
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

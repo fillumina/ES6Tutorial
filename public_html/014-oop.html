@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>OOP</title>
+        <title>014 OOP</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // Incapsulation
 
             // with object and classes it's impossible, functions allow that:
@@ -21,10 +22,12 @@
             var obj = new incapsulatedObj();
             obj.setVar(12);
             Assert.equals(obj.getVar(), 12);
+
+            // that's the point: the variable is hidden
             Assert.isUndefined(obj.privateVar);
 
-
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

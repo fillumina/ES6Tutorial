@@ -26,6 +26,23 @@ var PrettyPrint = {
     },
 
     /**
+     * Prints the prettified script contained in the tag with the given ID.
+     *
+     * @param {type} scriptId the id of the &gt;SCRIPT... element to print
+     * @param {type} titleStyle
+     * @param {type} divStyle
+     * @returns nothing
+     */
+    displayScriptById(scriptId,
+            titleStyle = "font-size: 14pt",
+            divStyle = "border: black solid 1px") {
+        document.writeln("<div id='prettyPrint-" + scriptId +"'></div>");
+        var script = document.getElementById(scriptId);
+        var elem = document.getElementById("prettyprint");
+        this.displayScript(script, elem);
+    },
+
+    /**
      * Reads the javascript contained in the specified SCRIPT tag
      * (either directly or linked by SRC=), formats it and writes it
      * in the innerHTML of the given destination.
@@ -74,7 +91,7 @@ var PrettyPrint = {
         let code = null;
         if (url !== undefined) {
             this.addDivWithCodeBeforeElement(destinationElement,
-                "<div style='" + titleStyle + "'>" +  + "</div>");
+                "<div style='" + titleStyle + "'>" + url + "</div>");
             code = this.load(url);
         }
         this.addDivWithCodeBeforeElement(
@@ -205,13 +222,13 @@ var PrettyPrint = {
                     if (!quote && !dblquote && !mlquote) {
                         result += c;
                         let next = code[i+1];
-                        if (!comment && !mlcomment && next == "/") {
+                        if (!comment && !mlcomment && next === "/") {
                             comment = true;
-                        } else if (!comment && !mlcomment && next == "*") {
+                        } else if (!comment && !mlcomment && next === "*") {
                             mlcomment = true;
-                        } else if (mlcomment && i>1 && code[i-1] == "*") {
+                        } else if (mlcomment && i>1 && code[i-1] === "*") {
                             mlcomment = false;
-                            if (next == "\n") {
+                            if (next === "\n") {
                                 result += this.newline(indent, tab);
                             }
                         }
@@ -316,7 +333,7 @@ var PrettyPrint = {
         let counter = 0;
         let l = code.length;
         for (let i=0; i<l; i++) {
-            if (code[i] == ";" && i+1<l && code[i+1] == "\n") {
+            if (code[i] === ";" && i+1<l && code[i+1] === "\n") {
                 counter++;
             }
         }
@@ -365,18 +382,18 @@ var PrettyPrint = {
             var quoted = quote || doublequote || mlQuote;
             var commented = comment || mlComment;
 
-            if (!mlComment && !quoted && c == "/" && i<l && code[i+1] == "*") {
+            if (!mlComment && !quoted && c === "/" && i<l && code[i+1] === "*") {
                 mlComment = true;
                 start = i;
                 i++;
 
-            } else if (mlComment && c == "*" && i<l && code[i+1] == "/") {
+            } else if (mlComment && !quoted && c === "*" && i<l && code[i+1] === "/") {
                 result += this.span(color.comment, code.slice(start, i+2));
                 mlComment = false;
                 start = i + 2;
                 i++;
 
-            } else if (!commented && !quote && !doublequote && c == "`") {
+            } else if (!commented && !quote && !doublequote && c === "`") {
                 if (mlQuote) {
                     if (i - start > 0) {
                         result += this.span(color.quote, code.slice(start, i+1));
@@ -389,12 +406,12 @@ var PrettyPrint = {
                 }
                 i++;
 
-            } else if (!commented && c == "/" && i<l && code[i+1] == "/") {
+            } else if (!quoted && !commented && c === "/" && i<l && code[i+1] === "/") {
                 comment = true;
                 start = i;
                 i++;
 
-            } else if (!doublequote && !comment && !mlComment && c == "'") {
+            } else if (!doublequote && !comment && !mlComment && c === "'") {
                 if (quote) {
                     if (i - start > 0) {
                         result += this.span(color.quote, code.slice(start, i+1));
@@ -405,7 +422,7 @@ var PrettyPrint = {
                 }
                 quote = !quote;
 
-            } else if (!quote && !comment && !mlComment && c == '"') {
+            } else if (!quote && !comment && !mlComment && c === '"') {
                 if (doublequote) {
                     if (i - start > 0) {
                         result += this.span(color.quote, code.slice(start, i+1));
@@ -416,7 +433,7 @@ var PrettyPrint = {
                 }
                 doublequote = !doublequote;
 
-            } else if (c == "\n") {
+            } else if (c === "\n") {
                 if (comment) {
                     result += this.span(color.comment, code.slice(start, i));
                     comment = false;
@@ -438,12 +455,12 @@ var PrettyPrint = {
                 // capture empty lines
                 for (let j=i+1; j<l; j++) {
                     let cj = code[j];
-                    if (cj == "\n") {
+                    if (cj === "\n") {
                         i = j;
                         start = i + 1;
                         result += "<br />\n";
 
-                    } else if (cj != " " ) {
+                    } else if (cj !== " " ) {
                         i += spaces;
                         start = i + 1;
                         break;
@@ -451,14 +468,14 @@ var PrettyPrint = {
                 }
 
             } else if (!quoted && !commented) {
-                if (c == "&") {
+                if (c === "&") {
                     for (let j=3; j<l-i; j++) {
-                        if (code[i+j] == ";") {
+                        if (code[i+j] === ";") {
                             i += j+1;
                             break;
                         }
                     }
-                } else if ("{}=+-/*~!@#$%^()[]\\;:<>?.,`".indexOf(c) != -1) {
+                } else if ("{}=+-/*~!@#$%^()[]\\;:<>?.,`".indexOf(c) !== -1) {
                     if (i - start > 0) {
                         result += this.markWord(code.slice(start, i),
                                 keywords, color.keyword);
@@ -466,10 +483,11 @@ var PrettyPrint = {
                     result += c.bold();
                     start = i + 1;
 
-                } else if ("0123456789".indexOf(c) != -1) {
+                } else if (i>0 && !/\w/.test(code[i-1]) &&
+                        "0123456789".indexOf(c) !== -1) {
                     let j=1;
                     for (; j<l-i; j++) {
-                        if ("0123456789+-.Ee".indexOf(code[i+j]) == -1) {
+                        if ("0123456789+-.Ee".indexOf(code[i+j]) === -1) {
                             break;
                         }
                     }
@@ -485,7 +503,7 @@ var PrettyPrint = {
                         i += j - 1;
                     }
 
-                } else if (c == " ") {
+                } else if (c === " ") {
                     if (i - start > 0) {
                         result += this.markWord(
                                 code.slice(start, i), keywords, color.keyword);
@@ -496,7 +514,7 @@ var PrettyPrint = {
                 }
             }
         }
-        result += code.slice(start, i) + "\n</DIV>\n"
+        result += code.slice(start, i) + "\n</DIV>\n";
         return result;
     },
 
@@ -506,16 +524,16 @@ var PrettyPrint = {
         let spaces = 0;
         for (let i=0; i<l; i++) {
             let c = code[i];
-            if (c == "\n") {
+            if (c === "\n") {
                 spaces = 0;
-            } else if (c != " ") {
+            } else if (c !== " ") {
                 if (min > spaces) {
                     min = spaces;
                 }
             }
             spaces++;
         }
-        return min == 0 ? 0 : min - 1;
+        return min === 0 ? 0 : min - 1;
     },
 
     span: function(color, txt) {

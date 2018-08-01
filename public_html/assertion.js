@@ -1,4 +1,21 @@
 
+class StopWatch {
+    constructor() {
+        this.timer = performance.now();
+    }
+
+    start() {
+        return this.timer = performance.now();
+    }
+
+    stop() {
+        var now = performance.now();
+        var elapsed = now - this.timer;
+        this.timer = now;
+        return elapsed;
+    }
+};
+
 var Logger = {
 
     log(id, ...msgs) {
@@ -29,6 +46,53 @@ var Logger = {
     }
 };
 
+
+function expects(title, array) {
+    var title = title;
+    var array = array;
+    var index = 0;
+    this.push = function(value) {
+        if (index >= array.length) {
+            var msg = "'" + title +
+                "' pushed '" + value +
+                "' past expected [" + array + "]";
+            Logger.log("log", "EXPECTS", msg);
+            Assert.throwError(msg);
+        }
+        Assert.equals(value, array[index], title + " index=" + index);
+        index++;
+        if (index === array.length) {
+            Logger.log("log", "EXPECTED", title, JSON.stringify(array), "OK!");
+        }
+    };
+    this.check = function() {
+        if (index !== array.length) {
+            var msg = title + " missing " +
+                    JSON.stringify(array.slice(index, array.length));
+            Logger.log("log", "EXPECTED", msg, "ERROR");
+            Assert.throwError(msg);
+        }
+    };
+}
+
+function ExpectsFactory() {
+    var expectsArray = [];
+
+    this.expects = function(title, ...array) {
+        var e = new expects(title, array);
+        expectsArray.push(e);
+        return e;
+    };
+
+    this.checkAllInMs = function(time) {
+        setTimeout( function() {
+            expectsArray.forEach( e => e.check() );
+        }, time);
+        Logger.log("log", "EXPECTS OK");
+    };
+}
+
+
 var Assert = {
 
     throwError(msg, title = "") {
@@ -41,6 +105,57 @@ var Assert = {
     isDefined(expr) {
         if (expr === undefined) {
             this.throwError("undefined", arguments[1]);
+        }
+    },
+
+    objectEquals(o1, o2) {
+        if (typeof o1 !== "object") {
+            this.throwError("first param not an object");
+        }
+        if (typeof o2 !== "object") {
+            this.throwError("second param not an object");
+        }
+        for (var p in o1) {
+            if (typeof o1[p] === "object") {
+                this.objectEquals(o1[p], o2[p]);
+            } else {
+                this.equals(o1[p], o2[p],
+                    "objects different at property '" + p + "': ");
+            }
+        }
+        for (var p in o2) {
+            if (typeof o2[p] === "object") {
+                this.objectEquals(o1[p], o2[p]);
+            } else {
+                this.equals(o1[p], o2[p],
+                    "objects different at property '" + p + "': ");
+            }
+        }
+    },
+
+    arrayEmpty(array) {
+        if (typeof array !== "object") {
+            this.throwError("array is not an object", arguments[0]);
+        }
+        if (array.length !== 0) {
+            this.throwError("array is not empty", arguments[0]);
+        }
+    },
+
+    arrayEquals(array, elements) {
+        if (typeof array !== "object") {
+            this.throwError("first param undefined");
+        }
+        if (typeof elements !== "object") {
+            this.throwError("second param undefined");
+        }
+        if (array.length != elements.length) {
+            this.throwError("array length mismatch: " +
+                    array.length + " != " + elements.length);
+        }
+        for (var i=0; i<array.length; i++) {
+            this.equals(array[i], elements[i],
+                "array different at index " + i + ": ");
         }
     },
 
@@ -62,13 +177,15 @@ var Assert = {
 
     equals(a, b) {
         if (a !== b) {
-            this.throwError("'" + a + "' != '" + b + "'", arguments[2]);
+            this.throwError(JSON.stringify(a) + " != " +
+                    JSON.stringify(b), arguments[2]);
         }
     },
 
     differs(a, b) {
         if (a === b) {
-            this.throwError("'" + a + "' == '" + b + "'", arguments[2]);
+            this.throwError(JSON.stringify(a) + " == " +
+                    JSON.stringify(b), arguments[2]);
         }
     },
 

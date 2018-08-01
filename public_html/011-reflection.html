@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>reflection</title>
+        <title>011 reflection</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -10,7 +10,7 @@
         <div id="code"></div>
         <script type="text/javascript" src="assertion.js"></script>
         <script type="text/javascript" src="prettyprinter.js"></script>
-        <script type="text/javascript" id="a">
+        <script type="text/javascript" id="demo">
             /*
              enumerating properties
              */
@@ -33,6 +33,8 @@
             // the prototype of an anonymous object defined with ={} is always Object
             Assert.equals(Object.getPrototypeOf(linus), Object.prototype);
 
+            // Object.getPrototypeOf(obj) != obj.prototype
+            Assert.differs(Object.getPrototypeOf(linus), linus.prototype);
 
             // objects defined with function() have their own prototype
             var user = function(name) {
@@ -156,6 +158,7 @@
             Sidecar.prototype.maxPeople = 3;
             Assert.equals(harley.maxPeople, 3);
 
+            // to test pretty printing
             var floatNumber = 1.234;
             var expNumber = -1.2E-3;
             var multiLineTest = `hello
@@ -165,6 +168,7 @@
             PrettyPrint.showScripts();
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

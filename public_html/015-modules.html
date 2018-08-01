@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>modules</title>
+        <title>015 modules</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -27,8 +27,10 @@
             </li>
         </ul>
 
-        <script type="module" src="imported-module-via-src.js"></script>
-        <script type="module">
+        <script type="module" src="imported-module-via-src.js" id="external"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <div id="url"></div>
+        <script type="module" id="demo">
             import * as Module from "./imported-module.js";
 
             Assert.isUndefined(Module.privateVariable);
@@ -57,6 +59,10 @@
             Assert.equals(Module.exportedObject.name, "Exported Object");
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("external");
+            PrettyPrint.displayScriptFromUrl("imported-module.js",
+                document.getElementById("url"));
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

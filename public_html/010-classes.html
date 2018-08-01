@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>classes</title>
+        <title>010 classes</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // definition of class (ES-6 only)
 
             class Contact {
@@ -21,6 +22,8 @@
                 fullName() {
                     return this.name + " " + this.surname;
                 }
+
+                // accessors for email
 
                 get email() {
                     return this._email;
@@ -39,6 +42,18 @@
             // instantiate an object using the constructor
             var franco = new Contact("Franco", "Rossi");
             Assert.equals(franco.fullName(), "Franco Rossi");
+
+            // set an invalid email
+            try {
+                franco.email = "invalid_email";
+                Assert.fail();
+            } catch (Error) {
+                // ok
+            }
+
+            // set a valid email
+            franco.email = "valid@email.com";
+            Assert.equals("valid@email.com", franco.email);
 
 
             // extends a class
@@ -61,7 +76,8 @@
             Assert.equals(linus.languages[1], "C++");
             Assert.equals(linus.languages[2], "ASM");
 
-            Log.end("log");
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

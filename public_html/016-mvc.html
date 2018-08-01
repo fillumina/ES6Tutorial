@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>MVC</title>
+        <title>016 MVC</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -20,7 +20,8 @@
 
 
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // MODEL
             var model = {
                 name: "",
@@ -53,6 +54,7 @@
             controller.init();
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

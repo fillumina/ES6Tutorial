@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>034 AJAX</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div id="ajax-content">...</div>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+
+            // this function mimic the fetch javascript API functionalities
+            function ajax(url, headersMap = new Map()) {
+                return new Promise(function(resolve, reject) {
+                    var httpReq = new XMLHttpRequest();
+                    httpReq.onreadystatechange = function() {
+                        if (httpReq.readyState === 4) {
+                            switch(httpReq.status) {
+                                case 200:
+                                    resolve(httpReq);
+                                    break;
+
+                                case 404:
+                                    reject(httpReq.status, "url not found");
+                                    break;
+
+                                case 500:
+                                    reject(httpReq.status, "server problem");
+                                    break;
+
+                                default:
+                                    reject(httpReq.status, "generic error");
+                            }
+                        };
+                    };
+
+                    headersMap.forEach(function(v, k) {
+                        httpReq.setRequestHeader(k, v);
+                    });
+                    httpReq.open("GET", url, true);
+                    httpReq.send();
+                });
+            };
+
+            ajax("034-ajax/ok.json").then(function(httpReq) {
+                Logger.log("log", "RESPONSE: " + httpReq.response);
+                var obj = JSON.parse(httpReq.response);
+                document.getElementById("ajax-content").innerHTML = obj.value;
+            }).catch(function(status, msg) {
+                Logger.log("log", "ERROR STATUS: " + status + ": " + msg);
+            });
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>

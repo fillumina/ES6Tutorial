@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>decorator</title>
+        <title>017 decorator</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // simple decorator (ECMASCRIPT 7, not available yet on chrome)
             function log(target) {
                 Logger.log("log", "" + target.name + ": " + arguments);
@@ -32,6 +33,7 @@
             tom.addTitle();
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

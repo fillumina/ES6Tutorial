@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>038 Files</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <input type="file" id="selectedFiles" multiple>
+        <br />
+
+        <div id="file-drop" style="width:400px;height:400px;border:solid black 1px">
+            file drop area
+        </div>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+
+            // file drop area
+            var area = document.getElementById("file-drop");
+
+            area.addEventListener("dragenter", stopDefault);
+            area.addEventListener("dragover", stopDefault);
+            area.addEventListener("drop", drop);
+
+            function stopDefault(event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+
+            function drop(event) {
+                stopDefault(event);
+                fileSelected(event.dataTransfer.files);
+            }
+
+            // file input
+            var fileInput = document.getElementById("selectedFiles");
+            fileInput.onchange = function(event) {
+                fileSelected(event.target.files);
+            };
+
+            function fileSelected(files) {
+                for (let i=0; i<files.length; i++) {
+                    let f = files[i];
+                    Logger.log("log", "FILES", f.name, f.size, f.type);
+                    if (f.type.indexOf("text") !== -1) {
+                        readTextFile(f).then(function(txt) {
+                            Logger.log("log", txt);
+                        });
+
+                    } else if (f.type.indexOf("image") !== -1) {
+                        imageTypeRecognizer(f).then(function(type) {
+                            Logger.log("log", "IMAGE TYPE", type);
+                        });
+                        readDataUrlFile(f).then(function(url) {
+                            Logger.log("log", "<img src='" + url + "' />");
+                        });
+                        makeFileDownloadable(f).then(function(url) {
+                            let a = "<a download='" + f.name + "' ";
+                            a += "href='" + url + "' >download</a>";
+                            Logger.log("log", a);
+                        });
+                    }
+                }
+            }
+
+            // txt file reader
+            function readTextFile(file) {
+                return new Promise(function(resolve) {
+                    var reader = new FileReader();
+
+                    reader.onload = event => {
+                        var txt = event.target.result;
+                        resolve(txt);
+                    };
+
+                    reader.readAsText(file);
+                });
+            }
+
+            // data url file reader
+            function readDataUrlFile(file) {
+                return new Promise(function(resolve) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(event) {
+                        var dataURL = event.target.result;
+                        resolve(dataURL);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // image type recognized
+            function imageTypeRecognizer(file) {
+                return new Promise(function(resolve) {
+                    var reader = new FileReader();
+
+                    reader.onload = event => {
+                        var buffer = event.target.result;
+                        var int32View = new Int32Array(buffer);
+                        var type = null;
+                        switch(int32View[0]) {
+                            case 1196314761:
+                                type = "png";
+                                break;
+                            case 944130375:
+                                type = "gif";
+                                break;
+                            case 544099650:
+                                type = "bmp";
+                                break;
+                            case -520103681:
+                                type = "jpg";
+                                break;
+                            default:
+                                type= "sconosciuto";
+                                break;
+                        }
+                        resolve(type);
+                    };
+
+                    reader.readAsArrayBuffer(file);
+                });
+            }
+
+            // downloads
+            function makeFileDownloadable(file) {
+                return new Promise(function(resolve) {
+                    var myBlob = new Blob([file], {type: "application/octet-stream"});
+                    var reader = new FileReader();
+
+                    reader.onload = function(event) {
+                        var URL = event.target.result;
+                        resolve(URL);
+                    };
+
+                    reader.readAsDataURL(myBlob);
+                });
+            }
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>

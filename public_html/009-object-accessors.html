@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>object's accessors</title>
+        <title>009 object's accessors</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
+        <p>
+            see:
+            <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain">
+                Inheritance and the prototype chain
+            </a>
+        </p>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // create an object via Object.create()
 
             var person = function() {
@@ -114,16 +121,22 @@
                 this.languages = languages;
             };
 
-            // devel still hasn't authenticate
-            var linus = new Devel(0, "xyzw");
+            // devel still hasn't authenticate()
+            var linus = new Devel(0, "xyzw", "C++");
             Assert.isUndefined(linus.authenticate);
 
             // set a copy of the user's prototype as devel's prototype
-            Devel.prototype = Object.create(User.prototype);
+            //Devel.prototype.authenticate = User.prototype.authenticate;
+            Object.assign(Devel.prototype, User.prototype);
 
+            var unclebob = new Devel(0, "qwerty", "C++");
+            Assert.isTrue(unclebob.authenticate("qwerty"));
+
+            // and it's true for old objects too that points to Devel's prototype
             Assert.isTrue(linus.authenticate("xyzw"));
 
-            Log.end("log");
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

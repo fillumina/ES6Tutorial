@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>for cycles</title>
+        <title>005 for cycles</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // classic c-style
 
             var a = new Array();
@@ -26,7 +27,9 @@
             }
             Assert.equals(sum, 45);
 
+
             // for in used to enumerate object's properties
+
             var obj = {
                 name: "Francesco",
                 vote: 7
@@ -36,6 +39,7 @@
                 s += v + ": " + obj[v] + ", ";
             }
             Assert.equals(s, "name: Francesco, vote: 7, ");
+
 
             // for of (value)
 
@@ -53,7 +57,8 @@
             });
             Assert.equals(sum, 30);
 
-            Log.end("log");
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

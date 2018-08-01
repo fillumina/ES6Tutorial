@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>forms</title>
+        <title>026 forms</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
+        <p>Cheching validity set directly into INPUT tags</p>
         <form action="#" method="dialog" name="myForm">
             <label for="user">User:</label>
             <input name="user" type="text"  minlength="3" maxlength="25" required>
@@ -26,7 +27,8 @@
         </form>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
 
             function getErrors(validity) {
                 var errors = [];
@@ -56,6 +58,7 @@
             };
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

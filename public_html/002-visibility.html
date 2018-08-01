@@ -8,13 +8,15 @@
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // visibility of var
 
             var v = "outer";
             var o = 12;
 
             Assert.equals(v, "outer");
+            Assert.equals(o, 12);
 
             function func() {
                 var v = "inner";
@@ -26,7 +28,7 @@
             Assert.equals(v, "outer");
 
 
-            // let is visible only into local block and sub-blocks
+            // besides functions var has a flat scope
 
             (function varTest() {
                 var x = 1;
@@ -36,6 +38,9 @@
                 }
                 Assert.equals(x, 2);
             })();
+
+
+            // unlike let
 
             (function letTest() {
                 let x = 1;
@@ -49,13 +54,15 @@
 
             // scope-chain
 
-            function sayHello(person) {
+            function sayHello(person) {  // no need to define person
+                // just expects an object with name and surname property
                 var fullName = person.name + " " + person.surname;
 
                 return function(title) {
                     return title + " " + fullName;
                 };
             }
+            // defines an object
             var saluteJDoe = sayHello({name: 'John', surname: 'Doe'});
 
             // here fullName doesn't exist but is used anyway in the function
@@ -67,6 +74,8 @@
             function multilingualHello(name) {
                 var salutes = [];
                 for (v of ['Ciao', 'Hello', 'Saludos']) {
+                    // function is executed later and only the last value of
+                    // v is retained from the loop
                     salutes.push(function() {
                         return v + " " + name;
                     });
@@ -87,6 +96,7 @@
                 for (v of ['Ciao', 'Hello', 'Saludos']) {
                     salutes.push(
                         // using an IIFE will fix the value
+                        // IIFE = Immediately Invoked Function Expression
                         (function(value) {
                             return function() {
                                 return value + " " + name;
@@ -103,7 +113,8 @@
             Assert.equals(helloFixed[1](), "Hello Fra");
             Assert.equals(helloFixed[2](), "Saludos Fra");
 
-            Log.end("log");
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
     </body>
 </html>

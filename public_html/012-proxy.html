@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>proxy</title>
+        <title>012 proxy</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -9,7 +9,8 @@
         <input id="money" type="text" />
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // doesn't allow null values
             var handler = {
                 get(target, propertyName) {
@@ -43,7 +44,7 @@
                 bind(src, srcProperty, trg, trgProperty) {
                     var handler = {
                         set(target, propertyName, value) {
-                            if (propertyName == srcProperty) {
+                            if (propertyName === srcProperty) {
                                 trg[trgProperty] = value;
                             }
                             target[propertyName] = value;
@@ -65,6 +66,7 @@
             Assert.equals(money['value'], "100");
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

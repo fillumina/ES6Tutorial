@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>functions</title>
+        <title>006 functions</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // arguments array
 
             function getArguments() {
@@ -84,7 +85,8 @@
 
 
             // IIFE Immediately Invoked Function Execution (also called IFE)
-            // this is a trick to create isolated scopes
+            // this is a trick to create isolated scopes (mostly used
+            // before let keyword was available)
 
             var ext = 10;
             var result = (function(x, y) {
@@ -96,7 +98,7 @@
             Assert.equals(ext, 10);
 
 
-            // arrow functions
+            // arrow functions (lambda)
 
             // without parameters
             var func1 = () => "something";
@@ -139,7 +141,25 @@
             var value = addition(2);
             Assert.equals(value, 7);
 
-            Log.end("log");
+
+            // passing parameters down the nested functions
+            var nestedFunctions = function() {
+                this.y = 7;
+                var x = 5;
+                this.func =  function() {
+                    this.y = 12;
+                    return function() {
+                        this.y = 666;  // <---- y is this!
+                        return [x, this.y];
+                    };
+                };
+            };
+            var nested = new nestedFunctions();
+            Assert.equals(nested.func()()[0], 5);
+            Assert.equals(nested.func()()[1], 666);
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

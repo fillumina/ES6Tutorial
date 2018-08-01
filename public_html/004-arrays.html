@@ -8,7 +8,8 @@
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // array creation
 
             var a = ['a', 'b', 'c'];
@@ -73,7 +74,8 @@
             Assert.equals(x, 1);
             Assert.equals(y, 2);
 
-            Log.end("log");
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

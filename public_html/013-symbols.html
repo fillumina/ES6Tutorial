@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>symbols</title>
+        <title>013 symbols</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
 
+            // each Symbol is unique even if created with the same name
             var i = Symbol("mioSimbolo");
             var j = Symbol("mioSimbolo");
             Assert.differs(i, j);
 
+            // but a Symbol may be recalled by its name
             var x = Symbol.for("mioSimbolo");
             var y = Symbol.for("mioSimbolo");
             Assert.equals(x, y);
 
-
-            // use symbol for private properties
+            // use Symbols for private properties
             var obj = {};
             var s = Symbol();
             obj[s] = "hello world";
@@ -32,7 +34,7 @@
             Assert.equals(Reflect.ownKeys(obj)[0], s);
 
 
-            // use symbol for enumerations
+            // use Symbols to emulate enum
             var Weekdays = {
                 Monday: Symbol(),
                 Thuesday: Symbol(),
@@ -51,6 +53,9 @@
 
             // iterators
             class Collection {};
+
+            // Symbol.iterator is predefined Symbol and it's used to define
+            // the iterable property of objects [as an object with next()]
             Collection.prototype[Symbol.iterator] = function() {
                 var self = this;
                 var i = 0;
@@ -89,6 +94,7 @@
             Assert.equals(toString(collMissing), "a b ");
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

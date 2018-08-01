@@ -8,7 +8,8 @@
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
 
             // undefined
 
@@ -30,9 +31,9 @@
 
             // null is an object
 
-            u = null;
-            Assert.isNull(u);
-            Assert.isObject(u);
+            u4 = null;
+            Assert.isNull(u4);
+            Assert.isObject(u4);
 
 
             // strings
@@ -82,9 +83,9 @@
             Assert.equals(octal, 10);
             Assert.isNumber(octal);
 
-            exadecimal = 0xA1F;
-            Assert.equals(exadecimal, 2591);
-            Assert.isNumber(exadecimal);
+            hexadecimal = 0xA1F;
+            Assert.equals(hexadecimal, 2591);
+            Assert.isNumber(hexadecimal);
 
             Assert.equals(-0, +0);
 
@@ -178,7 +179,9 @@
             w = w || 7;
             Assert.equals(w, 5);
 
-            Log.end("log");
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+
         </script>
 
     </body>

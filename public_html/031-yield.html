@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>031 yeld and Generators</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+
+            // basic yield working
+            function* g1() {
+                yield "one";
+                yield "two";
+            };
+
+            var e1 = g1();
+            Assert.objectEquals(e1.next(), {value: "one", done: false} );
+            Assert.objectEquals(e1.next(), {value: "two", done: false} );
+            Assert.objectEquals(e1.next(), {done: true} );
+
+
+            // yieliding arrays
+            function* g2() {
+                yield ["one", "two"];  // <--- note the absense of *
+            }
+
+            var e2 = g2();
+            Assert.objectEquals(e2.next(), {value: ["one","two"], done: false} );
+            Assert.objectEquals(e2.next(), {done: true} );
+
+
+            // yieliding with * on arrays
+            function* g3() {
+                yield* ["one", "two"];  // <--- note the *
+            }
+
+            var e3 = g3();
+            Assert.objectEquals(e3.next(), {value: "one", done: false} );
+            Assert.objectEquals(e3.next(), {value: "two", done: false} );
+            Assert.objectEquals(e3.next(), {done: true} );
+
+
+            // yielding other generators
+            function *g4() {
+                yield 2;
+                yield 3;
+            }
+
+            function *g5() {
+                yield 1;
+                yield *g4();
+                yield 4;
+            }
+            var e5 = g5();
+            Assert.objectEquals(e5.next(), {value: 1, done: false} );
+            Assert.objectEquals(e5.next(), {value: 2, done: false} );
+            Assert.objectEquals(e5.next(), {value: 3, done: false} );
+            Assert.objectEquals(e5.next(), {value: 4, done: false} );
+            Assert.objectEquals(e5.next(), {done: true} );
+
+
+            // return value is ignored
+            function *g6() {
+                yield 1;
+                yield 2;
+                return 3;
+            }
+            Assert.differs(3, g6());
+
+            // can be retrieved using this way
+            function *g7() {
+                return 3;
+            }
+            var result;
+            function *g8() {
+                result = yield* g7();
+            }
+            var e8 = g8();
+            Assert.objectEquals(e8.next(), {done: true});
+            Assert.equals(3, result);
+
+
+            // internal end external looping
+            function* g9() {
+                for (var i=0; i<3; i++) {
+                    yield i;
+                }
+            }
+            var e9 = g9();
+            var r9 = [];
+            // using the generator as an iterator
+            for (var v of e9) {
+                r9.push(v);
+            }
+            Assert.arrayEquals(r9, [0, 1, 2]);
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>

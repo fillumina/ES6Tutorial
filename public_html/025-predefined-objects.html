@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Predefined Objects</title>
+        <title>025 Predefined Objects</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -9,23 +9,24 @@
         <div id="div">...</div>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // typed array
 
             var buffer = new ArrayBuffer(64);
             var bufferView8bit = new Int8Array(buffer);
             var bufferView32bit = new Int32Array(buffer);
-            
+
             Assert.equals(bufferView8bit.length, bufferView32bit.length * 4);
 
-            for (var i=0; i<bufferView8bit.length; i++) {                
+            for (var i=0; i<bufferView8bit.length; i++) {
                 bufferView8bit[i] = (i % 4 == 0) ? i/4 : 0;
             }
-            
+
             for (var i=0; i<bufferView32bit.length; i++) {
                 Logger.log("log", "buffer[" + i + "]", bufferView32bit[i]);
                 Assert.equals(bufferView32bit[i], i);
-            }            
+            }
 
 
             // set
@@ -45,13 +46,18 @@
             myset.delete(1);
             Assert.isFalse(myset.has(1));
 
-            
+
             // map
-            
+
             var mymap = new Map();
             mymap.set("name", "Linus");
             mymap.set(2.18, "hello");
-            
+
+            // iterating over map
+            mymap.forEach(function(v, k) {
+                Logger.log("log", "entry", "" + k + " => " + v);
+            });
+
             Assert.equals(mymap.size, 2);
             Assert.equals(mymap.get("name"), "Linus");
             Assert.equals(mymap.get(2.18), "hello");
@@ -84,6 +90,7 @@
             // at this point the WeakMap 'could' reclaim the element...
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

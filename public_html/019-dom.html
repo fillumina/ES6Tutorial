@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>dom</title>
+        <title>019 dom</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -21,7 +21,8 @@
 
         <ol id="log"></ol>
         <script id="assertion" type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // select by ID
             var div = document.getElementById("alfa");
             div.innerHTML = "I was here!";
@@ -94,6 +95,7 @@
             main.appendChild(img);
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

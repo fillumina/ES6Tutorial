@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>037 Object Store</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+            if (!window.indexedDB) {
+                console.log("This browser doesn't support indexedDB");
+            }
+
+            class ObjectStore {
+                constructor(name, version, tables=[], onerror) {
+                    this.name = name;
+                    this.version = version;
+                    this.db = null;
+                    this.tables = tables;
+                    this.onerror = onerror;
+                }
+
+                open(tableName, indexName, keyName, unique = false) {
+                    let db = this.db;
+                    let tables = this.tables;
+                    let version = this.version;
+                    let createIndexFlag = (tableName !== undefined);
+                    if (createIndexFlag) {
+                        version++;
+                    }
+                    return new Promise((resolve, error) => {
+                        let request = window.indexedDB.open(this.name, version);
+
+                        request.onupgradeneeded = event => {
+                            db = event.target.result;
+                            tables.forEach(tName => {
+                                if(db.objectStoreNames.contains(tName)) {
+                                    db.deleteObjectStore(tName);
+                                }
+                                let store = db.createObjectStore(tName, {keyPath: "id"});
+                                if (tName === tableName && createIndexFlag) {
+                                    this.createIndex(store, indexName, keyName, unique);
+                                }
+                            });
+                        };
+
+                        request.onsuccess = event => {
+                            this.db = event.target.result;
+                            resolve(this);
+                        };
+
+                        request.onerror = error;
+                    });
+                }
+
+                createIndex(store, indexName, keyName, unique = false) {
+                    store.createIndex(indexName, keyName, {unique: unique});
+                    return Promise.resolve(this);
+                }
+
+                put(tableName, data, mustBeNew = false) {
+                    let trans = this.db.transaction([tableName], "readwrite");
+                    let store = trans.objectStore(tableName);
+                    let request = null;
+                    return new Promise((resolve, error) => {
+                        if (mustBeNew) {
+                            request = store.add(data);
+                            resolve(this);
+                        } else {
+                            request = store.put(data);
+                            resolve(this);
+                        }
+
+                        request.onerror = error;
+                    });
+                }
+
+                get(tableName, id) {
+                    return new Promise((resolve, error) => {
+                        let trans = this.db.transaction([tableName], "readonly");
+                        let store = trans.objectStore(tableName);
+                        let request = store.get(id);
+                        request.onsuccess = resolve;
+                        request.onerror = error;
+                    }).then(response => {
+                        this.result = response.target.result;
+                        return Promise.resolve(this);
+                    });
+                }
+
+                delete(tableName, id) {
+                    return new Promise((resolve, error) => {
+                        let trans = this.db.transaction([tableName], "readwrite");
+                        let store = trans.objectStore(tableName);
+                        let request = store.delete(id);
+                        request.onsuccess = resolve;
+                        request.onerror = error;
+                    }).then( response => {
+                        return Promise.resolve(this);
+                    });
+                }
+
+                getByIndex(tableName, indexName, value) {
+                    return new Promise((resolve, error) => {
+                        let trans = this.db.transaction([tableName], "readonly");
+                        let store = trans.objectStore(tableName);
+                        let indice = store.index(indexName);
+                        let request = indice.get(value);
+
+                        request.onsuccess = resolve;
+                        request.onerror = error;
+                    }).then( response => {
+                        this.result = response.target.result;
+                        return Promise.resolve(this);
+                    });
+                }
+
+                clearTable(tableName) {
+                    return new Promise((resolve, error) => {
+                        let trans = this.db.transaction([tableName], "readwrite");
+                        let store = trans.objectStore(tableName);
+                        let request = store.clear();
+                        request.onsuccess = resolve;
+                        request.onerror = error;
+                    }).then( response => {
+                        return Promise.resolve(this);
+                    });
+                }
+
+                destroyObjectStore() {
+                    window.indexedDB.deleteDatabase(this.name);
+                    this.db = null;
+                }
+            }
+
+            let store = new ObjectStore("myStore", 1, ["myTable"]);
+            store.open("myTable", "nameIdx", "name")
+                .then(store => store.put("myTable", {id:1, name:"Fra"}))
+                .then(store => store.get("myTable", 1))
+                .then(store => {
+                    Logger.log("log", "GET", "name", store.result.name);
+                    return Promise.resolve(store);
+                })
+                .then(store => store.getByIndex("myTable", "nameIdx", "Fra"))
+                .then(store => {
+                    Logger.log("log", "GET BY INDEX", "name", store.result.name);
+                    return Promise.resolve(store);
+                })
+                .then(store => store.delete("myTable", 1))
+                .then(store => store.get("myTable", 1))
+                .then(store => {
+                    Logger.log("log", "GET", "name", store.result);
+                    return Promise.resolve(store);
+                })
+                .then(store => store.clearTable("myTable"))
+                .then(store => store.destroyObjectStore());
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>

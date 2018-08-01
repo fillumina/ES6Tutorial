@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>observer</title>
+        <title>024 observer</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -9,7 +9,8 @@
         <div id="mutant"></div>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
 
             var mutationManager = function(mutationRecords) {
                 for (r of mutationRecords) {
@@ -27,12 +28,12 @@
                 // characterData: true,
                 // characterDataOldValue: true,
                 // childList: true,
-                // subtree: true,       
+                // subtree: true,
                 // attributeFilter: true  // arrays of names of attributes to observe
             });
 
-            div.setAttribute("data-try", "hello world");            
-            div.setAttribute("data-try", null);            
+            div.setAttribute("data-try", "hello world");
+            div.setAttribute("data-try", null);
 
             setTimeout(function() {
                 observer.disconnect();
@@ -44,6 +45,7 @@
             }, 500);
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

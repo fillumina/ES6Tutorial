@@ -8,7 +8,8 @@
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             //"use strict";
 
             // with "use strict" this would not be allowed (need var or let)
@@ -49,6 +50,7 @@
                 function innerFunc() {
                     // cannot do this with "use strict"
                     // g is created here and available in the context of func()
+                    // 'this' is the func() object
                     this.g = 8;
                 }
 
@@ -79,7 +81,8 @@
 
             funcStrict();
 
-            Log.end("log");
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

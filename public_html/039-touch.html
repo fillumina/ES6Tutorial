@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>039 touch</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <canvas id="myTouchCanvas" height="400" width="400"
+                style="border:solid black 1px"></canvas>
+        <br />
+        <canvas id="myPointerCanvas" height="400" width="400"
+                style="border:solid black 1px"></canvas>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+
+            // TOUCH (Apple)
+            // works on chrome & firefox
+            var myTouchCanvas = document.getElementById("myTouchCanvas");
+            var touchContext = myTouchCanvas.getContext("2d");
+
+            touchContext.strokeStyle = "rgb(255, 0, 0)";
+
+            myTouchCanvas.addEventListener("touchstart", function(event) {
+                for (let i = 0; i < event.targetTouches.length; i++) {
+                    let touch = event.targetTouches[i];
+                    touchContext.beginPath();
+                    touchContext.arc(touch.pageX, touch.pageY, 20, 0, 2*Math.PI, true);
+                    touchContext.fill();
+                    touchContext.stroke();
+                }
+            });
+
+            // POINTER (Miscrosoft)
+            // doesn't seem to work on both chrome and firefox
+            var myPointerCanvas = document.getElementById("myPointerCanvas");
+            var pointerContext = myPointerCanvas.getContext("2d");
+
+            pointerContext.strokeStyle = "rgb(255, 0, 0)";
+
+            myPointerCanvas.addEventListener("pointerdown", function(event) {
+                pointerContext.beginPath();
+                pointerContext.arc(event.pageX, event.pageY, 20, 0, 2*Math.PI, true);
+                pointerContext.fill();
+                pointerContext.stroke();
+            });
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>

@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>images</title>
+        <title>027 images</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <div id='image-container'></div>
         <br>
-        
+
         <svg id="svgImg" style='width:auto;border:solid 1px black'>
             <circle id="circle"
                     cx="100" cy="100" r="50"
                     style="stroke: #000000; fill: #00ff00;" />
         </svg>
         <br>
-        
+
         <canvas id="myCanvas" width="300px" height="200px"
                 style='width:auto;border:solid 1px black'>
             Text to show to older browsers and web-spiders ;-)
@@ -25,7 +25,8 @@
         <ol id="log"></ol>
 
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // preload an img with the Image object
             var img = new Image();
             img.src = "images/zerotalent.jpg";
@@ -37,7 +38,7 @@
             var direction = 1;
             var timer = setInterval(function() {
                 circle.cx.baseVal.value += direction * 10;
-                if (circle.cx.baseVal.value + circle.r.baseVal.value > 
+                if (circle.cx.baseVal.value + circle.r.baseVal.value >
                         svgImg.width.baseVal.value ||
                     circle.cx.baseVal.value < circle.r.baseVal.value) {
                     direction = -direction;
@@ -53,7 +54,7 @@
             img.onload = function() {
                 context.drawImage(img, 0, 0);
             };
-            img.src = "images/zerotalent.jpg";             
+            img.src = "images/zerotalent.jpg";
 
             // drawing into a canvas
             setTimeout(function() {
@@ -67,6 +68,7 @@
             }, 200);
 
             Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

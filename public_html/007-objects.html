@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>objects</title>
+        <title>007 objects</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
             // empty object
             var empty = {};
 
@@ -108,7 +109,7 @@
             // contact.fullName is called out of the context of contact
             Assert.differs(hello, "Hello Francesco Illuminati");
 
-            // assigning this using call()
+            // assigning this using call() (JS internal function)
             function sayWithCall(obj, func) {
                 return func.call(obj, "Mr.");
             }
@@ -119,7 +120,7 @@
                             "Mr. John Doe");
 
 
-            // assigning this using apply()
+            // assigning this using apply() (JS internal function)
             function sayWithApply(obj, func) {
                 return func.apply(obj, ["Mr."]);
             }
@@ -137,7 +138,8 @@
             Assert.equals(helloContact, "Mr. Francesco Illuminati");
 
 
-            Log.end("log");
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
         </script>
 
     </body>

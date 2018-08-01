@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>035 Fetch</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <p>
+            See
+            <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">
+                fetch API
+            </a>
+        </p>
+        <div id="ajax-content">...</div>
+        <ol id="log"></ol>
+        <script type="text/javascript" src="assertion.js"></script>
+        <script type="text/javascript" src="prettyprinter.js"></script>
+        <script type="text/javascript" id="demo">
+
+            var factory = new ExpectsFactory();
+
+            // example
+            var e1 = factory.expects("ok", true, "Ajax payload value");
+
+            // fetch() is a built in WEB API function to simplify AJAX
+            fetch("034-ajax/ok.json")
+                    .then(response => {
+                        e1.push(response.ok);
+                        if (response.ok) {
+                            return response.json();
+                        }
+                    })
+                    .then(content => {
+                        e1.push(content.value);
+                        document.getElementById("ajax-content")
+                                .innerHTML = content.value;
+                    })
+                    .catch(error => {
+                        e1.push(error);
+                    });
+
+
+            // catching an error
+            var e2 = factory.expects("wrong", "Failed to fetch");
+            fetch("WRONG")
+                    .then(response => {
+                        e2.push(response.ok);
+                        if (response.ok) {
+                            return response.json();
+                        }
+                    })
+                    .then(content => {
+                        e2.push(content.value);
+                        document.getElementById("ajax-content")
+                                .innerHTML = content.value;
+                    })
+                    .catch(error => {
+                        e2.push(error.message);
+                    });
+
+            factory.checkAllInMs(1000);
+
+
+            Logger.end("log");
+            PrettyPrint.displayScriptById("demo");
+        </script>
+
+    </body>
+</html>
