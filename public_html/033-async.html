@@ -44,7 +44,6 @@
                          error => Logger.log("log", "foo", error));
 
 
-
             // how to collect values calculated in parallel with await
 
             function getValueAfterMs(value, ms) {
@@ -55,32 +54,41 @@
                 });
             }
 
-            (async function func() {
-                var timer = new StopWatch();
+            // this code is executed serialized: BE CAREFUL!
+            async function series() {
+                let result =
+                    await getValueAfterMs("one", 500) // wait 500ms
+                    +
+                    await getValueAfterMs("two", 500); // then wait another 500ms
+                return result;
+            }
 
-                // starts all the promises together
-                var promises = [
-                    getValueAfterMs("one", 500),
-                    getValueAfterMs("two", 250),
-                    getValueAfterMs("three", 50)
-                ];
+            let t1 = new StopWatch();
+            series().then(success => {
+                        let elapsed = t1.stop();
+                        Logger.log("log", "series", success);
+                        Logger.log("log", "series", elapsed);
+                        Assert.equals("onetwo", success);
+                        Assert.isTrue(elapsed > 1000);
+                    });
 
-                // collects the promises in order
-                var result3 = [];
-                for (var promise of promises) {
-                    var p = await promise;
-                    result3.push(p);
-                }
 
-                var elapsed = timer.stop();
+            // this code is executed in parallel
+            async function parallel() {
+                const wait1 = getValueAfterMs("one", 500);
+                const wait2 = getValueAfterMs("two", 500);
+                // the code is running, now wait for the results
+                return await wait1 + await wait2;
+            }
 
-                // should be the time of the longer pause (about 500 ms)
-                Logger.log("log", "func()", "ASYNC time", elapsed);
-
-                Assert.arrayEquals(result3, ['one', 'two', 'three']);
-
-                Logger.log("log", "func()" , "end");
-            })();
+            let t2 = new StopWatch();
+            parallel().then(success => {
+                        let elapsed = t2.stop();
+                        Logger.log("log", "parallel", success);
+                        Logger.log("log", "parallel", elapsed);
+                        Assert.equals("onetwo", success);
+                        Assert.isTrue(elapsed < 600);
+                    });
 
 
             Logger.end("log");

@@ -5,9 +5,13 @@ class StopWatch {
     }
 
     start() {
-        return this.timer = performance.now();
+        this.timer = performance.now();
     }
 
+    /**
+     *
+     * @returns the time elapsed in milliseconds (approximated)
+     */
     stop() {
         var now = performance.now();
         var elapsed = now - this.timer;
@@ -305,6 +309,6 @@ try {
     counter++;
 }
 
-if (counter != 9) {
-    this.throwError("not all tests succeed!");
+if (counter !== 9) {
+    this.throwError("not all tests succeeded!");
 }
