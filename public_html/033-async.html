@@ -91,6 +91,33 @@
                     });
 
 
+            // async lambda
+
+            function getChangedValueAfterMs(value, ms) {
+                return new Promise(function(resolve) {
+                    setTimeout(function() {
+                        resolve("changed_" + value);
+                    }, ms);
+                });
+            }
+
+            let array = ["one", "two", "three"];
+            let results = [];
+
+            array.forEach(async (elem) => {
+                const result = await getChangedValueAfterMs(elem, 500);
+                Logger.log("log", "lambda_inner", result);
+                results.push(result);
+            });
+
+            // results gets filled in time, now it's still empty
+            Assert.equals(0, results.length);
+
+            sleep(800).then(() =>
+                // after waiting at least 500 ms, results has its values
+                results.forEach(res => Logger.log("log", "result", res))
+            );
+
             Logger.end("log");
             PrettyPrint.displayScriptById("demo");
         </script>

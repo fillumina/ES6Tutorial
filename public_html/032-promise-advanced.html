@@ -6,36 +6,57 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
+        <p>
+            See
+            <a href="https://developers.google.com/web/fundamentals/primers/promises">
+                Promises
+            </a>
+        </p>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
         <script type="text/javascript" src="prettyprinter.js"></script>
         <script type="text/javascript" id="demo">
             // this approach is equal to ASYNC
 
-            // see: https://developers.google.com/web/fundamentals/primers/promises
             // every call to yield creates a new Promise which is then
             // put in the execution stack and the code goes on. This way
             // things are executed in parallel until there is an error
             // or we reach the last yield.
             // While the promises are resolved they are recomposed in the
             // right order and returned all together after the last yield.
+
+            // anyway it's a very complicated experiment that can just be
+            // done easily using async (see next lesson).
+
             function spawn(generatorFunc) {
                 function continuer(verb, arg) {
                     var result;
                     try {
+                        // call the 'verb' method of generator, arg is undefined
+                        // verb can be 'next' or 'throw'
                         result = generator[verb](arg);
                     } catch (err) {
                         return Promise.reject(err);
                     }
                     if (result.done) {
+                        // return the final result
                         return result.value;
                     } else {
-                        return Promise.resolve(result.value).then(onFulfilled, onRejected);
+                        // Promise.resolve() is returned and it's value
+                        // assigned as the result of yield
+                        return Promise.resolve(result.value)
+                                // cycle through the generator until it's done
+                                // calling one yield at a time
+                                .then(onFulfilled, onRejected);
                     }
                 }
                 var generator = generatorFunc();
+
+                // bind methods to continuer (so itself when called)
                 var onFulfilled = continuer.bind(continuer, "next");
                 var onRejected = continuer.bind(continuer, "throw");
+
+                // here it starts iterating
                 return onFulfilled();
             }
 
@@ -50,7 +71,9 @@
                 Assert.arrayEquals(result1, ['one', 'two', 'three']);
             });
 
+
             // complex example
+
             function getValueAfterMs(value, ms) {
                 return new Promise(function(resolve, reject) {
                     setTimeout(function() {
@@ -61,7 +84,7 @@
 
             // WRONG: here we wait for each timer consecutively
             spawn(function *() {
-                var perf = new StopWatch();
+                var timer = new StopWatch();
 
                 var a = yield getValueAfterMs("one", 500);
                 var b = yield getValueAfterMs("two", 250);
@@ -70,7 +93,7 @@
                 // collects the promises in order
                 var result2 = [a, b, c];
 
-                var elapsed = perf.stop();
+                var elapsed = timer.stop();
                 Logger.log("log", "WRONG yield time", elapsed);
                 Assert.arrayEquals(result2, ['one', 'two', 'three']);
             });
@@ -79,7 +102,7 @@
             // RIGHT: here we run all the promises together and then collect
             // the ordered results
             spawn(function *() {
-                var perf = new StopWatch();
+                var timer = new StopWatch();
 
                 // starts all the promises together
                 var promises = [
@@ -95,7 +118,7 @@
                     result3.push(p);
                 }
 
-                var elapsed = perf.stop();
+                var elapsed = timer.stop();
                 Logger.log("log", "RIGHT yield time", elapsed);
 
                 Assert.arrayEquals(result3, ['one', 'two', 'three']);
