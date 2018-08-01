@@ -49,8 +49,24 @@
             Assert.isUndefined(car.stero, "ster_o");
 
 
-            // methods
+            // fast assignation of name and value
+            let x = 1;
+            let y = 2;
+            let obj = {x,y};
+            Assert.equals(1, obj.x);
+            Assert.equals(2, obj.y);
 
+
+            // computed names
+            let n = "fra"
+            let comp = {
+                [n + 2]: 1,
+                ["hello_" + n]: 2
+            };
+            Assert.equals(1, comp.fra2);
+            Assert.equals(2, comp.hello_fra);
+
+            // methods
             var course = {
                 votes: [],
                 isPassed: function() {
@@ -65,6 +81,14 @@
             course.votes = [3, 7, 8];
             Assert.isTrue( course.isPassed() );
 
+
+            // enhanced notation for methods
+            var enhanced = {
+                multiply(x, y) {
+                    return x * y;
+                }
+            };
+            Assert.equals(12, enhanced.multiply(4, 3));
 
             // Object
             var family = new Object();

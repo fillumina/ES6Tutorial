@@ -124,7 +124,7 @@ var PrettyPrint = {
 
     isMinified(code) {
         if (typeof code === "string") {
-            return this.lineFeedAfterSemicolonCounter(code) / code.length < 0.01;
+            return code.length / this.lineFeedAfterSemicolonCounter(code) > 100;
         }
         return false;
     },
@@ -300,18 +300,6 @@ var PrettyPrint = {
                     }
                     break;
 
-                case "<":
-                    result += "&lt;";
-                    break;
-
-                case ">":
-                    result += "&gt;";
-                    break;
-
-                case "&":
-                    result += "&amp;";
-                    break;
-
                 default:
                     linestart = false;
                     result += c;
@@ -469,9 +457,14 @@ var PrettyPrint = {
 
             } else if (!quoted && !commented) {
                 if (c === "&") {
-                    for (let j=3; j<l-i; j++) {
-                        if (code[i+j] === ";") {
-                            i += j+1;
+                    let min = Math.min(l, i+7);
+                    let temp = code.slice(i, i+7);
+                    for (let j=i; j<min; j++) {
+                        if ("{}=+-/*~!@#$%^()[]\\:<>?.,`".indexOf(code[j]) !== -1) {
+                            break;
+                        }
+                        if (code[j] === ";") {
+                            i = j + 1;
                             break;
                         }
                     }

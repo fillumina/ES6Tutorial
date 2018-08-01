@@ -6,11 +6,46 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
+        <p>
+            See:
+            <a href="https://developers.google.com/web/fundamentals/primers/async-functions">
+                ASYNC functions
+            </a>
+        </p>
         <ol id="log"></ol>
         <script type="text/javascript" src="assertion.js"></script>
         <script type="text/javascript" src="prettyprinter.js"></script>
         <script type="text/javascript" id="demo">
-            // see: https://developers.google.com/web/fundamentals/primers/async-functions
+            // a simple example
+
+            // returns a Promise that fulfills after the given time
+            function sleep(ms) {
+                return new Promise(r => setTimeout(r, ms));
+            }
+
+            // waits for sleep() to end and then return a Promise fulfilling
+            // with 'world'
+            async function hello() {
+                await sleep(500);
+                return 'world';
+            }
+
+            hello().then(resolve => Logger.log("log", "hello", resolve),
+                         error => Logger.log("log", "hello", error));
+
+            // waits for sleep() to end and then return a Promise rejecting
+            // with 'bar'
+            async function foo() {
+                await sleep(500);
+                throw Error('bar');
+            }
+
+            foo().then(resolve => Logger.log("log", "foo", resolve),
+                         error => Logger.log("log", "foo", error));
+
+
+
+            // how to collect values calculated in parallel with await
 
             function getValueAfterMs(value, ms) {
                 return new Promise(function(resolve) {
@@ -21,7 +56,7 @@
             }
 
             (async function func() {
-                var perf = new Perf();
+                var timer = new StopWatch();
 
                 // starts all the promises together
                 var promises = [
@@ -37,10 +72,14 @@
                     result3.push(p);
                 }
 
-                var elapsed = perf.end();
-                Logger.log("log", "ASYNC time", elapsed);
+                var elapsed = timer.stop();
+
+                // should be the time of the longer pause (about 500 ms)
+                Logger.log("log", "func()", "ASYNC time", elapsed);
 
                 Assert.arrayEquals(result3, ['one', 'two', 'three']);
+
+                Logger.log("log", "func()" , "end");
             })();
 
 

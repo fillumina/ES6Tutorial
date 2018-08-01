@@ -20,7 +20,7 @@
                 // x is undefined
             }
 
-            var u2 = undefined;
+            var u2 = undefined;  // undefined is a type
             Assert.isUndefined(u2);
 
             // u3 is defined later on in the code, here it exists undefined
@@ -178,6 +178,13 @@
 
             w = w || 7;
             Assert.equals(w, 5);
+
+
+            // template literals
+            var a = "Fra";
+            var n = 6;
+            var s = `${a} is ${n} years old`;
+            Assert.equals("Fra is 6 years old", s);
 
             Logger.end("log");
             PrettyPrint.displayScriptById("demo");

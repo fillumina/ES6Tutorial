@@ -23,7 +23,7 @@
             Assert.objectEquals(e1.next(), {done: true} );
 
 
-            // yieliding arrays
+            // yielding arrays
             function* g2() {
                 yield ["one", "two"];  // <--- note the absense of *
             }
@@ -33,7 +33,7 @@
             Assert.objectEquals(e2.next(), {done: true} );
 
 
-            // yieliding with * on arrays
+            // yielding with * on arrays
             function* g3() {
                 yield* ["one", "two"];  // <--- note the *
             }
