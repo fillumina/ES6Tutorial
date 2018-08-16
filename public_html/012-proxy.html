@@ -58,12 +58,12 @@
                 price: 0
             };
             var binder = new Binder();
-            var money = document.getElementById("money");
-            var proxiedInvoice = binder.bind(invoice, "price", money, "value");
+            var moneyInput = document.getElementById("money");
+            var proxiedInvoice = binder.bind(invoice, "price", moneyInput, "value");
 
-            Assert.equals(money['value'], "");
+            Assert.equals(moneyInput['value'], "");
             proxiedInvoice.price = 100;
-            Assert.equals(money['value'], "100");
+            Assert.equals(moneyInput['value'], "100");
 
             Logger.end("log");
             PrettyPrint.displayScriptById("demo");

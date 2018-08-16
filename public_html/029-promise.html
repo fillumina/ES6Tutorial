@@ -51,10 +51,11 @@
 
             // simplier way with catch()
             p.then(function(msg) {
-                    Logger.log("log", "promise 2", msg);
-                }).catch(function(error) {
-                    Logger.log("log", "promise 2", error);
-                });
+                        Logger.log("log", "promise 2", msg);
+                    })
+                .catch(function(error) {
+                        Logger.log("log", "promise 2", error);
+                    });
 
             // note that the promise is executed only once
 
@@ -71,7 +72,7 @@
             // until an exception arise and in that case it executes the
             // first catch next in the serie.
 
-            // if condition is false 'then' clause function will be executed
+            // if condition is true 'then' clause function will be executed
             var c1 = factory.expects("c1", "then");
             promise(true)
                     .then( function() {
@@ -242,7 +243,7 @@
                             c13.push("catch");
                         });
 
-            factory.checkAllInMs(1000);
+            factory.checkAllInMs(2000);
 
             Logger.end("log");
             PrettyPrint.displayScriptById("demo");

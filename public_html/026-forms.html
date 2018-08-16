@@ -6,22 +6,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <p>Cheching validity set directly into INPUT tags</p>
+        <p>Checking validity set directly into INPUT tags</p>
         <form action="#" method="dialog" name="myForm">
             <label for="user">User:</label>
-            <input name="user" type="text"  minlength="3" maxlength="25" required>
+            <input id="user" name="user" type="text" maxlength="25" required>
             <br>
             <label for="pass">Pass: (123x)</label>
-            <input name="pass" type="text" pattern="\d{1,4}\a" required>
+            <input id="pass" name="pass" type="text" pattern="\d{1,4}\a" required>
             <br>
             <label for="fullname">Full Name:</label>
-            <input name="fullname" type="text" minlength="2" maxlength="25" required>
+            <input id="fullname" name="fullname" type="text" maxlength="25" required>
             <br>
             <label for="age">Age:</label>
-            <input name="age" type="number" value="25" min="18" max="80">
+            <input id="age" name="age" type="number" value="25" min="18" max="30">
             <br>
             <label for="email">Email:</label>
-            <input name="age" type="email" >
+            <input id="email" name="email" type="email" >
             <br>
             <button id=validate type="submit">Validate</button>
         </form>
@@ -46,7 +46,7 @@
             validateBtn.onclick = function() {
                 let validForm = true;
                 for (i of form.childNodes) {
-                    if (i.tagName == "INPUT") {
+                    if (i.tagName === "INPUT") {
                         let valid = i.validity.valid;
                         validForm = validForm && valid;
                         if (!valid) {

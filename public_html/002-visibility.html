@@ -30,14 +30,14 @@
 
             // besides functions var has a flat scope
 
-            (function varTest() {
+            (function varTest() { // this construct defines a separate context
                 var x = 1;
                 if (true) {
                     var x = 2;  // same variable!
                     Assert.equals(x, 2);
                 }
                 Assert.equals(x, 2);
-            })();
+            })(); // executes varTest() immediately
 
 
             // unlike let
@@ -59,7 +59,7 @@
                 var fullName = person.name + " " + person.surname;
 
                 return function(title) {
-                    return title + " " + fullName;
+                    return title + " " + fullName; // fullname exsists here
                 };
             }
             // defines an object

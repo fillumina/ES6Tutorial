@@ -1,7 +1,6 @@
 /**
  * PrettyPrint by Francesco Illuminati fillumina_at_gmail.com
  *
- * @type type
  */
 
 var PrettyPrint = {

@@ -58,7 +58,7 @@
 
 
             // computed names
-            let n = "fra"
+            let n = "fra";
             let comp = {
                 [n + 2]: 1,
                 ["hello_" + n]: 2
@@ -140,6 +140,8 @@
 
             Assert.equals(sayWithCall(contact, contact.fullName),
                             "Mr. Francesco Illuminati");
+
+            // the user object is different but has the same properties
             Assert.equals(sayWithCall(user, contact.fullName),
                             "Mr. John Doe");
 

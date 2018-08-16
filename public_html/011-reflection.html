@@ -19,16 +19,20 @@
             var linus = {
                 name: "Linus",
                 surname: "Torvalds",
-                tel: "06123"
+                tel: "06123",
+                fullname: function() { return this.name + " " + this.surname; }
             };
 
             var props = [];
+            // traverses properties
             for (let p in linus) {
                 props.push(p + " => " + linus[p]);
             }
             Assert.equals(props[0], "name => Linus");
             Assert.equals(props[1], "surname => Torvalds");
             Assert.equals(props[2], "tel => 06123");
+            // and also functions
+            Assert.equals(props[3], "fullname => function() { return this.name + \" \" + this.surname; }");
 
             // the prototype of an anonymous object defined with ={} is always Object
             Assert.equals(Object.getPrototypeOf(linus), Object.prototype);
@@ -51,13 +55,16 @@
             // objects created with Object.create don't have a prototype
             Assert.isUndefined(devel.prototype);
 
+            // adding a property to user doesn't adds it to devel
             user.age = 21;
             Assert.isFalse(Reflect.has(devel, "age"));
 
+            // adding a property to user's prototype adds it to devel
             user.prototype.id = 12;
             Assert.isTrue(Reflect.has(devel, "id"));
             Assert.isFalse(devel.hasOwnProperty("id"));
 
+            // adding a property to devel make it its own
             devel.language = "Javascript";
             Assert.isTrue(Reflect.has(devel, "language"));
             Assert.isTrue(devel.hasOwnProperty("language"));
@@ -78,9 +85,12 @@
                 }
             }
             Assert.differs(Vehicle.prototype, Object.prototype);
-            var veh = new Car();
+            var ford = new Car();
+            // adding a property to the prototype of the base class...
             Vehicle.prototype.hello = function() { return "hello"; };
-            Assert.equals(veh.hello(), "hello");
+            // ...makes it available to the extended one
+            Assert.equals(ford.hello(), "hello");
+
 
             // get properties descriptors
 
@@ -142,6 +152,7 @@
                 return this * (100 + v) / 100;
             }
             Assert.equals( Reflect.apply(vat, 10, [20]), 12);
+            //          the value of 'this' ---^   ^--- the v parameter
             Assert.equals( Function.prototype.apply.call(vat, 10, [20]), 12);
 
             class Bike {
@@ -163,9 +174,6 @@
             var expNumber = -1.2E-3;
             var multiLineTest = `hello
                 world! and function`;
-
-            let script = document.getElementById("code");
-            PrettyPrint.showScripts();
 
             Logger.end("log");
             PrettyPrint.displayScriptById("demo");

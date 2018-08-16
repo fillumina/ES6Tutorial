@@ -10,7 +10,7 @@
         <script type="text/javascript" src="assertion.js"></script>
         <script type="text/javascript" src="prettyprinter.js"></script>
         <script type="text/javascript" id="demo">
-            // Incapsulation
+            // Incapsulation: make the internal state private
 
             // with object and classes it's impossible, functions allow that:
             var incapsulatedObj = function(value) {
@@ -23,7 +23,7 @@
             obj.setVar(12);
             Assert.equals(obj.getVar(), 12);
 
-            // that's the point: the variable is hidden
+            // that's the point: the variable 'privateVar' is hidden
             Assert.isUndefined(obj.privateVar);
 
             Logger.end("log");

@@ -117,11 +117,11 @@
                 // create user as it is this (adding its properties)
                 User.call(this, id, pass);
 
-                // add devel's own properties here
+                // add Devel's own properties here
                 this.languages = languages;
             };
 
-            // devel still hasn't authenticate()
+            // Devel still hasn't authenticate()
             var linus = new Devel(0, "xyzw", "C++");
             Assert.isUndefined(linus.authenticate);
 

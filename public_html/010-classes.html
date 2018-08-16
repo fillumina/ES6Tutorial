@@ -76,6 +76,14 @@
             Assert.equals(linus.languages[1], "C++");
             Assert.equals(linus.languages[2], "ASM");
 
+            // languages cannot be assigned...
+            linus.languages = ["Java"];
+            Assert.equals(3, linus.languages.length);
+
+            // ... but can be modified
+            linus.languages[1] = "Java";
+            Assert.equals("Java", linus.languages[1]);
+
             Logger.end("log");
             PrettyPrint.displayScriptById("demo");
         </script>
