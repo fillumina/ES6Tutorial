@@ -34,6 +34,9 @@
             // and also functions
             Assert.equals(props[3], "fullname => function() { return this.name + \" \" + this.surname; }");
 
+            // Object.getPrototypeOf() follows parents to find a prototype
+            // obj.prototype           is the prototype of that specific object
+
             // the prototype of an anonymous object defined with ={} is always Object
             Assert.equals(Object.getPrototypeOf(linus), Object.prototype);
 
@@ -52,6 +55,7 @@
             });
             // objects created with Object.create inherit the prototype
             Assert.equals(Object.getPrototypeOf(devel), user.prototype);
+
             // objects created with Object.create don't have a prototype
             Assert.isUndefined(devel.prototype);
 

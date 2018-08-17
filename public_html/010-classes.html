@@ -55,6 +55,10 @@
             franco.email = "valid@email.com";
             Assert.equals("valid@email.com", franco.email);
 
+            // unfortunately _email is still accessible
+            franco._email = "invalid";
+            Assert.equals("invalid", franco._email);
+
 
             // extends a class
 

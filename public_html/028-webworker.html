@@ -11,7 +11,6 @@
         <script type="text/javascript" src="prettyprinter.js"></script>
         <div id="worker"></div>
         <script type="text/javascript" id="demo">
-            // note: chrome doesn't work with local file workers
             var myWorker = new Worker("./webworker.js");
             myWorker.postMessage("start");
 

@@ -85,14 +85,14 @@
 
 
             // IIFE Immediately Invoked Function Execution (also called IFE)
-            // this is a trick to create isolated scopes (mostly used
+            // is a trick to create isolated scopes (mostly used
             // before let keyword was available)
 
             var ext = 10;
             var result = (function(x, y) {
-                var sum = x + y;
+                var add = x + y;
                 var ext = 0;
-                return sum + ext;
+                return add + ext;
             }(4,8));
             Assert.equals(result, 12);
             Assert.equals(ext, 10);
