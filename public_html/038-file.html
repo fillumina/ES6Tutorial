@@ -116,7 +116,7 @@
                                 type = "jpg";
                                 break;
                             default:
-                                type= "sconosciuto";
+                                type= "unknown";
                                 break;
                         }
                         resolve(type);
@@ -129,7 +129,7 @@
             // downloads
             function makeFileDownloadable(file) {
                 return new Promise(function(resolve) {
-                    var myBlob = new Blob([file], {type: "application/octet-stream"});
+                    var blob = new Blob([file], {type: "application/octet-stream"});
                     var reader = new FileReader();
 
                     reader.onload = function(event) {
@@ -137,13 +137,14 @@
                         resolve(URL);
                     };
 
-                    reader.readAsDataURL(myBlob);
+                    reader.readAsDataURL(blob);
                 });
             }
 
             Logger.end("log");
             PrettyPrint.displayScriptById("demo");
         </script>
+        <script src="experiment.js"></script>
 
     </body>
 </html>

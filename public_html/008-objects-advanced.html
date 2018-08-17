@@ -40,12 +40,12 @@
             obj["space and ="] = "";
             Assert.equals(obj["space and ="], "");
 
-            // removing property with unusual name
+            // removing property by assigning undefined
             obj["space and ="] = undefined;
             Assert.isUndefined(obj["space and ="]);
 
 
-            // constructor
+            // constructor (Employee is an object)
 
             function Employee(n, t) {
                 this.name = n;
@@ -88,6 +88,7 @@
             Logger.end("log");
             PrettyPrint.displayScriptById("demo");
         </script>
+        <script src="experiment.js"></script>
 
     </body>
 </html>

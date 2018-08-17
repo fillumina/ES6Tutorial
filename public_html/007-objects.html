@@ -84,14 +84,14 @@
 
             // enhanced notation for methods
             var enhanced = {
-                multiply(x, y) {
+                multiply(x, y) {  // the name is used instead of 'function'
                     return x * y;
                 }
             };
             Assert.equals(12, enhanced.multiply(4, 3));
 
             // Object
-            var family = new Object();
+            var family = new Object(); // also var family = {};
             family.mother = "Barbara";
             family.father = "Robert";
             family.children = 4;
@@ -167,6 +167,7 @@
             Logger.end("log");
             PrettyPrint.displayScriptById("demo");
         </script>
+        <script src="experiment.js"></script>
 
     </body>
 </html>
